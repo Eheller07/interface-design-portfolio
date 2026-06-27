@@ -1,0 +1,10 @@
+@import url("styles-base.css");
+
+.mode-title,
+.mode-desc,
+.store-option-title,
+.store-option-desc,
+.checkout-item-name,
+.checkout-spec {
+    display: block;
+}

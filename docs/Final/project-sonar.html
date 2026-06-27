@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SONAR / Game Radar - 项目档案</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="project.css">
+  <link rel="stylesheet" href="bubble-motion.css">
+  <script src="bubble-motion.js" defer></script>
+</head>
+<body class="theme-sonar">
+  <nav class="nav">
+    <a class="brand" href="index.html#radar"><span class="brand-mark">S</span><span>Memory Fragment 01</span></a>
+    <div class="nav-links"><a href="#brief">项目概览</a><a href="#system">设计系统</a><a href="#gallery">界面展示</a><a href="index.html#radar">返回深海</a></div>
+  </nav>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Responsive Web Design / 2026</p>
+        <h1>SONAR<span>Game Radar</span></h1>
+        <p class="lead">把游戏资讯、检索与百科信息组织成一套“雷达扫描”体验。用户不是被动阅读列表，而是在高密度信息海域中定位下一款值得关注的作品。</p>
+        <div class="meta"><span>游戏百科</span><span>响应式网页</span><span>信息检索</span><span>视觉系统</span></div>
+        <a class="live-link" href="../作业二_sonar/index.html">打开可交互原型 ↗</a>
+      </div>
+      <div class="suspended">
+        <figure class="hero-frame"><img src="../作业二_sonar/sonar_homepage/target/01.png" alt="SONAR 首页设计"><figcaption class="frame-tag">Live radar / Homepage</figcaption></figure>
+      </div>
+    </header>
+
+    <section class="section scene-section concept-scene" id="brief">
+      <div class="section-head"><div class="section-index">01 / Project Brief</div><div><h2>让信息成为可探索的海域</h2><p class="section-intro">项目针对游戏爱好者面对资讯分散、筛选条件复杂、跨设备体验不连续的问题，整合实时内容、模糊搜索、筛选与游戏资料库。设计目标不是堆叠更多卡片，而是让高密度内容仍然具有方向感。</p></div></div>
+      <div class="facts">
+        <article class="fact"><strong>问题</strong><p>资讯、折扣、评分和游戏档案分散，用户需要在多个页面之间反复确认。</p></article>
+        <article class="fact"><strong>策略</strong><p>以雷达作为核心隐喻，用扫描、坐标、信号强度建立统一的交互语言。</p></article>
+        <article class="fact"><strong>输出</strong><p>桌面、平板、移动端入口，以及首页、搜索、资料库和详情页面。</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="system">
+      <div class="section-head"><div class="section-index">02 / Design Logic</div><div><h2>雷达不只是装饰</h2><p class="section-intro">酸性绿色承担定位与操作反馈，青蓝色标记系统信息，深黑背景降低长时间浏览的视觉负担。网格、编号与细线把页面变成一块正在工作的监测面板。</p></div></div>
+      <div class="narrative-grid">
+        <article class="narrative"><h3>扫描式首页</h3><p>首屏以大型雷达与动态资讯构成视觉锚点，热点游戏像信号一样被捕获；侧栏保留新闻与趋势，形成“发现”和“确认”的双通道。</p></article>
+        <article class="narrative"><h3>可解释的检索</h3><p>搜索结果同时呈现平台、价格、类型和时间信息，筛选器始终可见，让用户理解结果为何出现，也能快速收窄范围。</p></article>
+        <article class="narrative"><h3>模块化百科</h3><p>游戏详情拆分为概览、媒体、配置、评分与关联内容。统一卡片尺度降低学习成本，强层级标题保障扫读效率。</p></article>
+        <article class="narrative"><h3>跨端连续性</h3><p>桌面端突出并行浏览，平板端重排侧栏，移动端保留核心扫描、搜索与卡片信息，触控目标和安全区域同步调整。</p></article>
+      </div>
+      <div class="palette" style="margin-top:28px"><div class="swatch" style="--swatch:#b7ff00;--label:#061006">SIGNAL<br>#B7FF00</div><div class="swatch" style="--swatch:#20d9ff;--label:#031015">DATA<br>#20D9FF</div><div class="swatch" style="--swatch:#071216">PANEL<br>#071216</div><div class="swatch" style="--swatch:#e8f3f5;--label:#071216">TEXT<br>#E8F3F5</div></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><div class="section-index">03 / User Flow</div><div><h2>从信号到完整档案</h2><p class="section-intro">页面结构围绕“发现、缩小范围、验证信息、保存目标”展开，使视觉叙事与任务路径保持同一方向。</p></div></div>
+      <div class="steps"><article class="step"><b>01</b><p>首页捕捉实时热点与推荐信号。</p></article><article class="step"><b>02</b><p>通过关键词与复合条件缩小范围。</p></article><article class="step"><b>03</b><p>进入资料库阅读结构化游戏档案。</p></article><article class="step"><b>04</b><p>跨设备继续浏览、比较与收藏。</p></article></div>
+    </section>
+
+    <section class="section scene-section showcase-scene" id="gallery">
+      <div class="section-head"><div class="section-index">04 / Interface Gallery</div><div><h2>高密度，也要有呼吸</h2><p class="section-intro">主画面以大尺度占据注意力，次级截图轻微错位并越出网格，像不同深度的声呐回波。悬浮与倾斜只用来建立层次，不干扰阅读。</p></div></div>
+      <div class="gallery system-gallery">
+        <figure class="shot shot-wide"><img src="../作业二_sonar/sonar_homepage/target/02.png" alt="SONAR 第二套主页面"><figcaption>Homepage / Alternate View</figcaption></figure>
+        <figure class="shot shot-tall"><img src="../作业二_sonar/成品截图/情绪板.png" alt="SONAR 情绪板"><figcaption>Moodboard</figcaption></figure>
+        <figure class="shot shot-half"><img src="../作业二_sonar/成品截图/屏幕截图 2026-05-24 201010.png" alt="SONAR 界面截图一"><figcaption>Search System</figcaption></figure>
+        <figure class="shot shot-half"><img src="../作业二_sonar/成品截图/屏幕截图 2026-05-24 201132.png" alt="SONAR 界面截图二"><figcaption>Responsive Layout</figcaption></figure>
+        <figure class="shot shot-wide"><img src="../作业二_sonar/成品截图/屏幕截图 2026-05-24 201304.png" alt="SONAR 界面截图三"><figcaption>Game Library</figcaption></figure>
+        <figure class="shot shot-tall"><img src="../作业二_sonar/成品截图/屏幕截图 2026-05-24 201405.png" alt="SONAR 界面截图四"><figcaption>Detail View</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section"><div class="reflection"><p><strong>设计反思：</strong>SONAR 最重要的收获，是把视觉隐喻转化成可重复使用的信息规则。后续可继续加入真实数据接口、筛选状态持久化与可访问性测试，让“雷达”从风格语言进一步成为可靠的工具体验。</p></div></section>
+    <section class="section"><div class="section-head"><div class="section-index">Continue Diving</div><div><h2>其他记忆碎片</h2></div></div><div class="next-projects"><a href="project-coffee.html">校园咖啡厅</a><a href="project-astlibra.html">ASTLIBRA RE</a><a href="index.html#radar">返回作品总览</a></div></section>
+    <footer class="footer"><span>Personal Portfolio / 2026</span><span>SONAR — Memory Fragment 01</span></footer>
+  </main>
+</body>
+</html>

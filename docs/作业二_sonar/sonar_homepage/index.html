@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sonar home page prototype</title>
+  <style>
+    :root{
+      --green:#b9ff00;
+      --green-soft:rgba(185,255,0,.16);
+      --green-glow:rgba(185,255,0,.36);
+      --black:#050706;
+      --panel:#0d120f;
+      --panel-2:#101711;
+      --line:rgba(185,255,0,.20);
+      --line-soft:rgba(255,255,255,.08);
+      --white:#f5f7f0;
+      --soft:#a9b2a6;
+      --muted:#8e978c;
+      --chip:#242b22;
+      --shadow:0 18px 50px rgba(0,0,0,.38);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--white);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(185,255,0,.10), transparent 24%),
+        radial-gradient(circle at 85% 12%, rgba(185,255,0,.06), transparent 22%),
+        #020403;
+      font-family:Inter,Arial,"Microsoft YaHei",sans-serif;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.015), rgba(255,255,255,0) 28%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 44px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.015) 0 1px, transparent 1px 44px);
+      opacity:.26;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), rgba(0,0,0,.25));
+      z-index:-1;
+    }
+
+    .page{
+      max-width:1280px;
+      margin:auto;
+      padding:18px 24px 56px;
+      position:relative;
+    }
+
+    .nav{
+      height:56px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 18px;
+      background:rgba(8,12,8,.84);
+      position:sticky;
+      top:12px;
+      z-index:50;
+      backdrop-filter:blur(16px);
+      box-shadow:0 8px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--green)}
+    .brand-badge{
+      width:30px;height:30px;border-radius:50%;position:relative;
+      background:radial-gradient(circle at 45% 45%, var(--green), #8cd400 60%, #5f9200 100%);
+      box-shadow:0 0 24px rgba(185,255,0,.46);
+    }
+    .brand-badge:before,.brand-badge:after{content:"";position:absolute;border-radius:50%}
+    .brand-badge:before{inset:6px;border:2px solid #071006}
+    .brand-badge:after{inset:11px;background:#071006}
+    .links{display:flex;gap:42px;font-size:14px}
+    .links a{color:#c8d0c4;text-decoration:none;position:relative}
+    .links a:first-child{color:var(--green)}
+    .links a:first-child::after{content:"";position:absolute;left:0;right:0;bottom:-16px;height:2px;background:var(--green);box-shadow:0 0 12px rgba(185,255,0,.5)}
+    .actions{display:flex;gap:10px;align-items:center}
+    .round,.avatar{
+      width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.12)
+    }
+    .round{color:var(--green);background:rgba(255,255,255,.02)}
+    .avatar{background:var(--green);color:#061006;font-weight:900}
+
+    .hero{
+      margin-top:16px;
+      min-height:430px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:24px;
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.008)),
+        radial-gradient(circle at 50% 0%, rgba(185,255,0,.08), transparent 40%),
+        #050806;
+      box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute; inset:-10% -5% auto;
+      height:120%;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(185,255,0,.16), transparent 24%),
+        linear-gradient(90deg, transparent 0 12%, rgba(185,255,0,.05) 12% 15%, transparent 15% 85%, rgba(185,255,0,.05) 85% 88%, transparent 88%),
+        url('sonar_assets/background/hero_grid_bg.png') center/cover;
+      opacity:.42;
+      mix-blend-mode:screen;
+      z-index:-2;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.26), transparent 18%, transparent 82%, rgba(0,0,0,.22)),
+        radial-gradient(circle at 50% 0%, transparent 0 12%, rgba(0,0,0,.6) 58%, rgba(0,0,0,.72) 100%);
+      z-index:-1;
+    }
+
+    .hero-wire,.hero-wire-right{
+      position:absolute;
+      width:520px;height:220px;pointer-events:none;opacity:.55;filter:drop-shadow(0 0 8px rgba(255,255,255,.12));
+      background-image:
+        linear-gradient(transparent, transparent),
+        linear-gradient(transparent, transparent);
+    }
+    .hero-wire{
+      left:-32px;bottom:8px;
+      background:
+        radial-gradient(circle at 0 100%, rgba(185,255,0,.12), transparent 32%);
+    }
+    .hero-wire-right{right:-48px;top:16px;transform:scaleX(-1)}
+    .wire-svg{width:100%;height:100%}
+
+    .hero-radar-wrap{
+      position:absolute;
+      top:-34px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      justify-content:center;
+      width:100%;
+      pointer-events:none;
+      z-index:3;
+    }
+
+    .hero-radar{
+      width:164px;height:164px;border-radius:50%;position:relative;
+      border:1px solid rgba(185,255,0,.44);
+      background:
+        radial-gradient(circle at center, rgba(185,255,0,.12) 0 12%, transparent 12% 100%),
+        repeating-radial-gradient(circle at center, rgba(185,255,0,.20) 0 2px, transparent 2px 24px),
+        linear-gradient(rgba(185,255,0,.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(185,255,0,.18) 1px, transparent 1px),
+        rgba(3,8,3,.72);
+      background-size:auto, auto, 100% 32px, 32px 100%, auto;
+      box-shadow:0 0 0 1px rgba(185,255,0,.20) inset, 0 0 26px rgba(185,255,0,.18), 0 16px 30px rgba(0,0,0,.36);
+      overflow:hidden;
+      animation:radarFloat 4s ease-in-out infinite;
+    }
+    .hero-radar::before{
+      content:"";
+      position:absolute;inset:-18%;border-radius:50%;
+      background:conic-gradient(from 0deg, rgba(185,255,0,0) 0 77%, rgba(185,255,0,.36) 88%, rgba(185,255,0,.02) 100%);
+      animation:radarSweep 3.8s linear infinite;
+      filter:blur(0.2px);
+    }
+    .hero-radar::after{
+      content:"";
+      position:absolute;inset:18px;border-radius:50%;border:1px solid rgba(185,255,0,.28)
+    }
+    .radar-cross,.radar-cross::before,.radar-cross::after{position:absolute;content:"";background:rgba(185,255,0,.28)}
+    .radar-cross{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+    .radar-cross::before{left:-81px;top:50%;width:164px;height:1px;transform:translateY(-50%)}
+    .radar-cross::after{
+      width:10px;height:10px;border-radius:50%;background:var(--green);left:-5px;top:42px;box-shadow:26px 34px 0 rgba(185,255,0,.95), -36px 58px 0 rgba(185,255,0,.92), 38px -8px 0 rgba(185,255,0,.7);
+      animation:pingBlink 2.8s ease-in-out infinite;
+    }
+
+    .hero-radar-icon{
+      position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);
+      width:110px;height:110px;border-radius:28px;z-index:2;
+      background:linear-gradient(145deg, rgba(185,255,0,.06), rgba(185,255,0,.01));
+      border:1px solid rgba(185,255,0,.18);
+      box-shadow:0 14px 24px rgba(0,0,0,.28);
+      display:grid;place-items:center;
+      backdrop-filter:blur(6px);
+      animation:iconFloat 5s ease-in-out infinite;
+    }
+    .hero-radar-icon svg{width:84px;height:84px;color:var(--green)}
+
+    .hero-content{
+      position:relative;z-index:4;width:min(900px, 92%);
+      margin:116px auto 0;
+      text-align:center;
+    }
+
+    .hero-content > *{
+      opacity:0; transform:translateY(16px) scale(.98);
+      transition:opacity .75s ease, transform .75s ease;
+    }
+    body.loaded .hero-content > *{opacity:1; transform:translateY(0) scale(1)}
+    body.loaded .hero-content p{transition-delay:.15s}
+    body.loaded .hero-search{transition-delay:.28s}
+    body.loaded .hero-feed{transition-delay:.44s}
+
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:10px;padding:7px 14px;border-radius:999px;
+      border:1px solid rgba(185,255,0,.24);background:rgba(185,255,0,.06);color:var(--green);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+      box-shadow:0 8px 18px rgba(0,0,0,.18);
+    }
+    .eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(185,255,0,.6);animation:pulse 2s infinite}
+
+    .hero h1{font-size:62px;line-height:1.02;margin:16px 0 14px;font-weight:900;letter-spacing:-.04em;text-wrap:balance}
+    .hero p{color:#b9c2b6;margin:0 auto 24px;font-size:16px;max-width:820px;line-height:1.7}
+
+    .hero-search{
+      display:flex;align-items:center;gap:12px;justify-content:center;position:relative;
+    }
+    .search{
+      height:60px;flex:1;max-width:780px;border:2px solid var(--green);border-radius:18px;background:rgba(8,11,8,.96);
+      display:flex;align-items:center;padding-left:20px;overflow:hidden;
+      box-shadow:0 0 26px rgba(185,255,0,.14), inset 0 1px 0 rgba(255,255,255,.03);
+      position:relative;
+    }
+    .search::before{
+      content:"";position:absolute;inset:0;background:linear-gradient(90deg, rgba(185,255,0,.04), transparent 24%, transparent 76%, rgba(185,255,0,.06));pointer-events:none
+    }
+    .search input{flex:1;background:transparent;border:0;color:#fff;outline:0;font-size:16px}
+    .search input::placeholder{color:#717b6e}
+    .search button{
+      width:72px;height:100%;border:0;background:var(--green);font-weight:900;color:#061006;font-size:18px;cursor:pointer
+    }
+
+    .hero-feed{
+      margin:20px auto 0;
+      min-height:52px;
+      width:min(930px, 100%);
+      border-radius:16px;
+      border:1px solid rgba(185,255,0,.18);
+      background:linear-gradient(90deg, rgba(185,255,0,.08), rgba(255,255,255,.02));
+      padding:12px 16px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+      box-shadow:0 16px 24px rgba(0,0,0,.2);
+    }
+    .feed-title{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--green);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .feed-title svg{width:14px;height:14px}
+    .feed-track{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#dfe8db;font-size:14px}
+    .feed-track span{display:flex;align-items:center;gap:8px}
+    .feed-track em{font-style:normal;color:var(--green);font-weight:900}
+    .feed-track i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(185,255,0,.55)}
+
+    .stats{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px auto 0;max-width:1180px;
+    }
+    .stat{
+      position:relative;overflow:hidden;padding:18px 18px 18px 16px;min-height:96px;
+      background:linear-gradient(180deg, rgba(13,18,15,.98), rgba(10,15,11,.94));
+      border:1px solid rgba(185,255,0,.16);border-radius:20px;
+      display:flex;gap:14px;align-items:center;box-shadow:var(--shadow);isolation:isolate;
+    }
+    .stat::before{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(140deg, rgba(185,255,0,.10), transparent 26%, transparent 100%);
+      z-index:-1;
+    }
+    .stat::after{
+      content:"";position:absolute;right:-30px;top:-26px;width:90px;height:90px;border:1px solid rgba(185,255,0,.14);border-radius:18px;transform:rotate(18deg)
+    }
+    .stat-icon{
+      width:56px;height:56px;border-radius:18px;border:1px solid rgba(185,255,0,.22);
+      display:grid;place-items:center;color:var(--green);
+      background:linear-gradient(180deg, rgba(185,255,0,.12), rgba(185,255,0,.02));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 0 18px rgba(185,255,0,.08);
+      flex:0 0 auto;
+    }
+    .stat-icon svg{width:25px;height:25px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .stat-data{display:flex;flex-direction:column;gap:4px}
+    .stat-data b{display:block;font-size:24px;line-height:1;color:#fff}
+    .stat-data span{font-size:12px;color:#a4aca0}
+    .stat-glow{position:absolute;left:0;bottom:0;width:100%;height:3px;background:linear-gradient(90deg, var(--green), transparent 80%);opacity:.75}
+
+    .ticker{margin-top:14px;border:1px solid var(--line);border-radius:16px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:#070a07;box-shadow:var(--shadow)}
+    .tick{padding:12px 14px;border:1px solid rgba(185,255,0,.18);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,.015), rgba(255,255,255,0))}
+    .tag{display:inline-block;background:var(--green);color:#071006;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:900}
+    .tick p{margin:8px 0 0;color:#aeb6aa;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px;align-items:start}
+    .section-title{margin:0 0 14px;font-size:18px}
+
+    .focus-card{
+      border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(180deg, rgba(9,14,10,.98), rgba(8,12,9,.94));
+      padding:22px;display:grid;grid-template-columns:260px 1fr;gap:26px;position:relative;overflow:hidden;box-shadow:var(--shadow);
+    }
+    .focus-card::before{
+      content:"";position:absolute;right:-80px;top:-80px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle, rgba(185,255,0,.12), transparent 68%);opacity:.65
+    }
+    .focus-card::after{
+      content:"";position:absolute;left:18px;right:18px;bottom:18px;height:1px;background:linear-gradient(90deg, rgba(185,255,0,.26), transparent 65%)
+    }
+    .focus-visual{position:relative;padding-top:10px}
+    .poster{
+      position:relative;overflow:visible;min-height:0;border-radius:20px;
+    }
+    .poster-frame{
+      width:100%;height:206px;border-radius:20px;overflow:hidden;position:relative;
+      box-shadow:0 26px 40px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.06) inset;
+      transform:rotate(-4deg) translateY(4px);
+      transition:transform .4s ease;
+    }
+    .focus-card:hover .poster-frame{transform:rotate(-2deg) translateY(0)}
+    .poster-frame img{width:100%;height:100%;object-fit:cover;display:block}
+    .poster-float-chip{
+      position:absolute;right:-10px;top:-6px;padding:8px 12px;border-radius:14px;background:rgba(185,255,0,.94);color:#071006;font-size:12px;font-weight:900;
+      box-shadow:0 16px 24px rgba(0,0,0,.28)
+    }
+    .poster-shadow-card{
+      position:absolute;left:18px;bottom:-22px;width:170px;height:84px;border-radius:18px;
+      background:linear-gradient(180deg, rgba(185,255,0,.10), rgba(255,255,255,.02));
+      border:1px solid rgba(185,255,0,.14);backdrop-filter:blur(10px);
+      box-shadow:0 20px 30px rgba(0,0,0,.28);
+      display:flex;align-items:center;gap:12px;padding:14px;
+      animation:floatCard 5s ease-in-out infinite;
+    }
+    .shadow-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;border:1px solid rgba(185,255,0,.18);background:rgba(185,255,0,.08);color:var(--green)}
+    .shadow-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .shadow-copy{font-size:12px;color:#d7ded2;line-height:1.45}
+    .shadow-copy b{display:block;color:#fff;margin-bottom:2px}
+
+    .focus-content{position:relative;z-index:1;padding-top:2px}
+    .focus-head{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    .focus-card h3{font-size:22px;line-height:1.25;margin:0 0 10px}
+    .focus-card p{margin:0;color:#c3cbc1;line-height:1.8;font-size:14px}
+    .focus-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+    .focus-meta span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-size:12px;color:#d9e2d6}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .btn{border:0;border-radius:12px;padding:12px 18px;font-weight:900;background:var(--green);color:#071006;cursor:pointer}
+    .btn.ghost{background:#1d241c;color:#e8eee3;border:1px solid rgba(255,255,255,.06)}
+
+    .radar-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .mini{
+      min-height:150px;border-radius:20px;background:linear-gradient(145deg, rgba(20,29,20,.96), rgba(14,20,15,.96));padding:18px 18px 16px;border:1px solid rgba(255,255,255,.08);
+      position:relative;overflow:hidden;box-shadow:var(--shadow);
+      display:grid;grid-template-columns:1fr 96px;align-items:center;gap:14px;
+    }
+    .mini::before{
+      content:"";position:absolute;inset:0;background:linear-gradient(135deg, rgba(185,255,0,.10), transparent 34%);pointer-events:none
+    }
+    .mini::after{
+      content:"";position:absolute;right:-24px;bottom:-24px;width:110px;height:110px;border-radius:24px;border:1px solid rgba(185,255,0,.12);transform:rotate(18deg)
+    }
+    .mini-copy{position:relative;z-index:1}
+    .mini-copy strong{font-size:32px;display:block;line-height:1.05;margin:10px 0 6px}
+    .mini-copy small{display:block;color:#8f998d;font-size:12px;line-height:1.6}
+    .mini-icon{
+      position:relative;z-index:1;width:96px;height:96px;border-radius:22px;border:1px solid rgba(185,255,0,.18);
+      display:grid;place-items:center;color:var(--green);background:rgba(185,255,0,.05);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)
+    }
+    .mini-icon svg{width:64px;height:64px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .mini-icon img{width:64px;height:64px;object-fit:contain;filter:hue-rotate(70deg) saturate(2.8) brightness(1.15)}
+
+    .sales{margin-top:28px}
+    .sale-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .sale{min-height:142px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:#111611;display:grid;grid-template-columns:120px 1fr auto;gap:18px;align-items:center;padding:18px;box-shadow:var(--shadow)}
+    .sale-logo{height:92px;border-radius:14px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,#44c9ff,#7be5ff);font-weight:900}
+    .sale-logo img{width:80%;height:80%;object-fit:contain}
+    .sale:nth-child(2) .sale-logo{background:linear-gradient(135deg,#8a65ff,#b28dff)}
+    .sale:nth-child(3) .sale-logo{background:linear-gradient(135deg,#ffce57,#ffe596)}
+    .sale:nth-child(4) .sale-logo{background:var(--green)}
+    .sale h3{margin:0 0 8px}.sale p{margin:4px 0;color:#abb3a8;font-size:13px}.pill{justify-self:end;background:var(--green);color:#061006;border-radius:999px;padding:8px 14px;font-weight:900;font-size:12px}
+
+    .schedule{margin-top:30px}
+    .schedule-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .tri{width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:14px solid var(--green)}
+    .schedule-shell{border:1px solid rgba(185,255,0,.18);border-radius:18px;background:linear-gradient(180deg,rgba(10,15,10,.95),rgba(8,12,8,.9));overflow:hidden;box-shadow:var(--shadow)}
+    .schedule-toolbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+    .toolbar-note{font-size:13px;color:var(--soft)}
+    .toolbar-note strong{color:var(--white)}
+    .toolbar-side{display:flex;align-items:center;gap:10px;color:var(--soft);font-size:12px}
+    .toolbar-side .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(185,255,0,.55)}
+    .game-list{max-height:640px;overflow-y:auto;padding:12px 16px 18px;border-left:5px solid var(--green);scroll-behavior:smooth}
+    .game-list::-webkit-scrollbar{width:10px}.game-list::-webkit-scrollbar-track{background:#0a0f0a}.game-list::-webkit-scrollbar-thumb{background:rgba(185,255,0,.26);border-radius:999px;border:2px solid #0a0f0a}
+    .game{display:grid;grid-template-columns:92px minmax(0,1fr) 184px;gap:18px;align-items:start;margin-top:14px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:linear-gradient(90deg,rgba(12,18,12,.98),rgba(8,17,10,.94));padding:16px}
+    .game:first-child{margin-top:0}.cover{height:120px;border-radius:12px;overflow:hidden;background:#2a3227;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset}.cover img{width:100%;height:100%;object-fit:cover}.game-main{min-width:0}.game-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}.game h3{margin:0;font-size:20px}.game-sub{font-size:12px;color:var(--soft)}.game p{margin:10px 0 0;color:#d7ded2;font-size:13px;line-height:1.65}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{font-size:11px;color:#bfc8bb;background:var(--chip);border-radius:999px;padding:5px 10px}.meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;margin-top:14px}.meta-item{min-width:0}.meta-label{display:block;font-size:11px;letter-spacing:.04em;color:#82907d;margin-bottom:4px;text-transform:uppercase}.meta-value{font-size:12px;color:#eff4eb;line-height:1.5}.game-side{display:flex;flex-direction:column;align-items:flex-end;gap:12px}.release-badge{width:100%;padding:12px 14px;border-radius:14px;background:rgba(185,255,0,.08);border:1px solid rgba(185,255,0,.2)}.release-badge small{display:block;color:#93a18e;font-size:11px;margin-bottom:6px}.release-badge strong{display:block;font-size:18px;color:var(--green)}.release-badge span{display:block;margin-top:4px;font-size:12px;color:#d8e1d3}.side-actions{display:flex;flex-direction:column;gap:10px;width:100%}.side-actions .btn,.side-actions .btn.ghost{text-align:center;width:100%}
+
+    @keyframes radarSweep{to{transform:rotate(360deg)}}
+    @keyframes pingBlink{0%,100%{opacity:.65}50%{opacity:1;filter:drop-shadow(0 0 7px rgba(185,255,0,.85))}}
+    @keyframes radarFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+    @keyframes iconFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(185,255,0,.5)}70%{box-shadow:0 0 0 12px rgba(185,255,0,0)}100%{box-shadow:0 0 0 0 rgba(185,255,0,0)}}
+    @keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+    @media(max-width:1080px){
+      .hero h1{font-size:52px}
+      .focus-card{grid-template-columns:220px 1fr}
+      .game{grid-template-columns:92px 1fr}
+      .game-side{grid-column:1 / -1;flex-direction:row;align-items:stretch}
+      .release-badge{flex:1}.side-actions{width:210px}
+    }
+
+    @media(max-width:900px){
+      .links{gap:18px}
+      .hero{min-height:480px}
+      .hero h1{font-size:40px}
+      .grid,.sale-grid,.radar-wrap{grid-template-columns:1fr}
+      .ticker,.stats{grid-template-columns:repeat(2,1fr)}
+      .focus-card{grid-template-columns:1fr}
+      .poster-frame{transform:none}
+      .poster-shadow-card{position:relative;left:auto;bottom:auto;width:100%;margin-top:14px}
+      .sale{grid-template-columns:96px 1fr}.pill{display:none}
+      .schedule-toolbar{flex-direction:column;align-items:flex-start;gap:10px}
+      .meta-grid{grid-template-columns:1fr}
+      .hero-feed{justify-content:flex-start}
+    }
+
+    @media(max-width:560px){
+      .page{padding:12px}
+      .links{display:none}
+      .hero{min-height:530px}
+      .hero-radar{width:136px;height:136px}
+      .hero-radar-icon{width:96px;height:96px}
+      .hero-content{margin-top:108px}
+      .hero h1{font-size:30px}
+      .hero p{font-size:14px}
+      .stats,.ticker{grid-template-columns:1fr}
+      .stat{min-height:88px}
+      .sale{grid-template-columns:82px 1fr}
+      .search{height:52px}
+      .search button{width:64px}
+      .game-list{border-left:0;padding-left:12px;padding-right:12px;max-height:none}
+      .cover{height:180px}
+      .game-side,.side-actions{width:100%;flex-direction:column}
+      .feed-track{gap:10px}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+      .hero-content > *{opacity:1;transform:none}
+    }
+  
+
+/* ===== SONAR unified identity / responsive touch system ===== */
+:root{
+  --sonar-green:#b9ff00;
+  --sonar-bg:#030503;
+  --sonar-panel:rgba(7,12,7,.86);
+  --sonar-panel-2:rgba(11,18,11,.92);
+  --sonar-border:rgba(185,255,0,.18);
+  --sonar-border-strong:rgba(185,255,0,.34);
+  --sonar-text:#f5f7f0;
+  --sonar-muted:#a2ada0;
+  --sonar-touch:48px;
+  --sonar-radius:20px;
+}
+html{scroll-padding-top:96px;-webkit-text-size-adjust:100%}
+body{min-width:320px;overscroll-behavior-y:none}
+a,button,.filter-chip,.smart-chip,.tab,.sale,.game,.post,.result-card{ -webkit-tap-highlight-color: transparent; }
+button,a{touch-action:manipulation}
+
+.sonar-nav.nav,.nav.sonar-nav{
+  height:64px;min-height:64px;
+  border:1px solid var(--sonar-border)!important;
+  border-radius:22px!important;
+  background:rgba(4,9,4,.84)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.03)!important;
+  backdrop-filter:blur(16px) saturate(1.08);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:0 18px!important;
+  position:sticky;top:max(10px, env(safe-area-inset-top));z-index:80;
+}
+.sonar-brand.brand,.brand.sonar-brand{
+  display:flex;align-items:center;gap:12px;color:var(--sonar-green)!important;text-decoration:none;flex:0 0 auto;min-width:max-content;
+}
+.sonar-brand strong{display:block!important;font-size:25px!important;letter-spacing:.02em;line-height:1!important;color:var(--sonar-green)!important;text-transform:uppercase;font-weight:950!important;text-shadow:0 0 12px rgba(185,255,0,.16)}
+.sonar-brand span span,.sonar-brand .brand-sub{display:block!important;font-size:12px!important;line-height:1.2!important;color:#dce6d8!important;font-weight:600!important;letter-spacing:.02em;text-transform:none!important}
+.sonar-mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;position:relative;flex:0 0 auto;border:1px solid var(--sonar-border-strong);background:radial-gradient(circle,rgba(185,255,0,.18),rgba(185,255,0,.03) 62%,rgba(0,0,0,.3));box-shadow:0 0 22px rgba(185,255,0,.18), inset 0 0 0 1px rgba(255,255,255,.04);overflow:hidden}
+.sonar-mark:before{content:"";position:absolute;inset:8px;border-radius:50%;border:1.5px solid var(--sonar-green);box-shadow:0 0 0 6px rgba(185,255,0,.07)}
+.sonar-mark:after{content:"";position:absolute;width:1.5px;height:34px;background:var(--sonar-green);box-shadow:0 0 10px rgba(185,255,0,.65);transform:rotate(90deg)}
+.sonar-mark .mark-dot{width:7px;height:7px;background:var(--sonar-green);border-radius:50%;z-index:1;box-shadow:0 0 14px rgba(185,255,0,.7)}
+.sonar-mark .sweep{position:absolute;inset:5px;border-radius:50%;background:conic-gradient(from 0deg, transparent 0 73%,rgba(185,255,0,.38),transparent 100%);animation:sonarMarkSweep 3.6s linear infinite}
+@keyframes sonarMarkSweep{to{transform:rotate(360deg)}}
+
+.sonar-links.links,.links.sonar-links{display:flex;align-items:center;justify-content:center;gap:clamp(18px,2.2vw,34px);font-size:14px;min-width:0;white-space:nowrap;scrollbar-width:none}
+.sonar-links::-webkit-scrollbar{display:none}
+.sonar-links a{color:#d2dad0!important;text-decoration:none!important;position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 2px;font-weight:650;opacity:.92}
+.sonar-links a.active{color:var(--sonar-green)!important;opacity:1}
+.sonar-links a.active::after{content:"";position:absolute;left:2px;right:2px;bottom:-10px;height:3px;border-radius:999px;background:var(--sonar-green);box-shadow:0 0 16px rgba(185,255,0,.6)}
+.sonar-actions.nav-actions,.nav-actions.sonar-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.sonar-actions .icon-btn,.sonar-actions .publish,.sonar-actions .user{min-width:44px;min-height:44px;height:44px;border-radius:999px!important;border:1px solid rgba(255,255,255,.10)!important;background:rgba(255,255,255,.025)!important;color:var(--sonar-green)!important;text-decoration:none;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.sonar-actions .publish{padding:0 16px;background:var(--sonar-green)!important;color:#071006!important;border-color:rgba(185,255,0,.5)!important}
+.sonar-actions .user{padding:0 10px 0 5px;gap:8px;color:#eef6ea!important}
+.sonar-actions .avatar{width:32px!important;height:32px!important;border-radius:50%;display:grid;place-items:center;background:#ddbd73!important;color:#33210b!important;font-weight:900!important}
+.sonar-search-glyph{font-size:22px;line-height:1;transform:translateY(-1px)}
+
+.btn,.pill,.search button,.search-submit,.cta-btn,.action-btn.primary,.publish{
+  transition:transform .22s ease, box-shadow .22s ease, filter .22s ease, background .22s ease;
+}
+.btn:hover,.pill:hover,.search button:hover,.search-submit:hover,.cta-btn:hover,.action-btn.primary:hover,.publish:hover{transform:translateY(-1px);box-shadow:0 0 22px rgba(185,255,0,.20)}
+.btn:active,.pill:active,.search button:active,.search-submit:active,.cta-btn:active,.action-btn:active,.filter-chip:active,.smart-chip:active{transform:scale(.98)}
+.sonar-pressed{animation:sonarPress .34s ease both}@keyframes sonarPress{0%{box-shadow:0 0 0 0 rgba(185,255,0,.35)}100%{box-shadow:0 0 0 10px rgba(185,255,0,0)}}
+
+/* interactive scan on search focus */
+.search-shell,.search{position:relative;overflow:hidden}
+.search-shell::after,.search::after{content:"";position:absolute;inset:-1px;pointer-events:none;opacity:0;transform:translateX(-130%);background:linear-gradient(105deg,transparent 0 38%,rgba(185,255,0,.20) 48%,rgba(255,255,255,.13) 50%,rgba(185,255,0,.16) 52%,transparent 64%);mix-blend-mode:screen}
+.search-shell:focus-within,.search:focus-within{border-color:rgba(185,255,0,.62)!important;box-shadow:0 0 0 2px rgba(185,255,0,.08),0 0 30px rgba(185,255,0,.18),0 24px 40px rgba(0,0,0,.32)!important}
+.search-shell:focus-within::after,.search:focus-within::after{opacity:1;animation:sonarSearchSweep 1.45s ease infinite}
+@keyframes sonarSearchSweep{0%{transform:translateX(-130%)}60%,100%{transform:translateX(130%)}}
+
+/* result refresh feedback shared by game-library page */
+body.results-refreshing .results-col > .panel,body.results-refreshing .result-card{filter:blur(5px) brightness(.7);transform:translateY(14px) scale(.985);opacity:.56;transition:.28s ease}
+.results-col{position:relative}.results-col::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--sonar-green),transparent);opacity:0;transform:translateX(-110%);box-shadow:0 0 18px rgba(185,255,0,.5);pointer-events:none;z-index:5}
+body.results-refreshing .results-col::after{opacity:1;animation:sonarResultScan .72s ease}@keyframes sonarResultScan{to{transform:translateX(110%)}}
+body.results-refreshed .result-card{animation:sonarResultPop .58s cubic-bezier(.22,1,.36,1) both}.result-card:nth-of-type(2){animation-delay:.04s}.result-card:nth-of-type(3){animation-delay:.09s}.result-card:nth-of-type(4){animation-delay:.14s}.result-card:nth-of-type(5){animation-delay:.19s}@keyframes sonarResultPop{from{opacity:.35;filter:blur(5px);transform:translateY(22px) scale(.975)}to{opacity:1;filter:none;transform:none}}
+
+/* tablet and mobile dead-zone handling */
+@media (pointer:coarse){
+  .btn,.pill,.search button,.search-submit,.cta-btn,.action-btn,.filter-chip,.smart-chip,.tab,.icon-btn,.sonar-links a{min-height:var(--sonar-touch)}
+  .links a,.sonar-links a{padding-left:6px;padding-right:6px}
+}
+@media (max-width:1180px) and (min-width:761px){
+  .page{padding-left:max(18px,calc(env(safe-area-inset-left) + 18px))!important;padding-right:max(18px,calc(env(safe-area-inset-right) + 18px))!important}
+  .sonar-nav.nav{gap:14px}
+  .sonar-links.links{gap:22px;overflow-x:auto;justify-content:flex-start;flex:1;padding:0 6px 4px}
+  .sonar-actions .publish{display:none}
+  .hero-content,.hero-inner{touch-action:pan-y}
+}
+@media (max-width:760px){
+  html{scroll-padding-top:132px}
+  .page{padding-left:max(12px,calc(env(safe-area-inset-left) + 12px))!important;padding-right:max(12px,calc(env(safe-area-inset-right) + 12px))!important;padding-bottom:max(28px,calc(env(safe-area-inset-bottom) + 28px))!important}
+  .sonar-nav.nav{height:auto!important;min-height:0;align-items:center;flex-wrap:wrap;padding:12px 12px 10px!important;top:max(8px,env(safe-area-inset-top));border-radius:18px!important;gap:10px}
+  .sonar-brand strong{font-size:21px!important}.sonar-brand .brand-sub{font-size:11px!important}.sonar-mark{width:38px;height:38px}
+  .sonar-actions{margin-left:auto}.sonar-actions .publish{display:none!important}.sonar-actions .user span{display:none}.sonar-actions .user{padding:0 5px!important}.sonar-actions .icon-btn{width:44px}
+  .sonar-links.links{order:3;width:100%;justify-content:flex-start;overflow-x:auto;gap:14px;padding:4px 6px 2px;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
+  .sonar-links a{scroll-snap-align:start;font-size:13px;min-width:44px;padding:0 4px}.sonar-links a.active::after{bottom:-4px;height:2px}
+  .search-shell,.search{border-radius:18px!important}.search-input{min-width:0}.search-submit,.search button{flex:0 0 54px!important;width:54px!important;border-radius:14px!important}
+  .hero,.hero-card,.banner-section,.panel,.schedule-shell{border-radius:20px!important}
+  .result-card,.sale,.game,.post{border-radius:18px!important}
+  .forum-grid{column-gap:0!important}
+}
+@media (max-width:430px){
+  .sonar-brand .brand-sub{display:none!important}.sonar-mark{width:34px;height:34px}.sonar-actions .user{display:none!important}
+}
+
+  
+/* ===== SONAR final unified identity patch ===== */
+:root{--sonar-green:#b9ff00;--sonar-bg:#020403;--sonar-panel:rgba(7,12,7,.86);--sonar-panel2:rgba(11,18,11,.9);--sonar-line:rgba(185,255,0,.22);--sonar-line-strong:rgba(185,255,0,.42);--sonar-text:#f5f7f0;--sonar-muted:#a7b1a3;--sonar-shadow:0 18px 46px rgba(0,0,0,.38)}
+html{scroll-padding-top:calc(84px + env(safe-area-inset-top,0px))}
+body{background-color:var(--sonar-bg)!important}
+.nav.sonar-unified-nav{height:64px!important;min-height:64px!important;border:1px solid var(--sonar-line)!important;border-radius:22px!important;background:rgba(4,8,4,.84)!important;box-shadow:0 18px 46px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.035)!important;backdrop-filter:blur(18px)!important;padding:0 18px!important;display:flex!important;align-items:center!important;gap:18px!important;position:sticky!important;top:max(12px,env(safe-area-inset-top,0px))!important;z-index:200!important}
+.sonar-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--sonar-text);min-width:190px}
+.sonar-logo__img{width:164px;height:42px;object-fit:contain;object-position:left center;display:block;filter:drop-shadow(0 0 10px rgba(185,255,0,.14));mix-blend-mode:screen}
+.sonar-logo__sub{display:none;color:var(--sonar-green);font-size:11px;letter-spacing:.16em;white-space:nowrap;text-transform:uppercase}
+.nav.sonar-unified-nav .brand{flex:0 0 auto!important;margin:0!important;padding:0!important}
+.nav.sonar-unified-nav .links,.nav.sonar-unified-nav .nav-links{flex:1 1 auto!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:26px!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important;white-space:nowrap!important}
+.nav.sonar-unified-nav .links::-webkit-scrollbar,.nav.sonar-unified-nav .nav-links::-webkit-scrollbar{display:none}
+.nav.sonar-unified-nav .links a,.nav.sonar-unified-nav .nav-links a{color:#d8e0d4!important;text-decoration:none!important;font-size:14px!important;line-height:44px!important;min-height:44px!important;padding:0 2px!important;position:relative!important}
+.nav.sonar-unified-nav .links a.sonar-active,.nav.sonar-unified-nav .nav-links a.sonar-active{color:var(--sonar-green)!important;font-weight:800!important}
+.nav.sonar-unified-nav .links a.sonar-active::after,.nav.sonar-unified-nav .nav-links a.sonar-active::after{content:""!important;position:absolute!important;left:0!important;right:0!important;bottom:0!important;height:3px!important;background:var(--sonar-green)!important;border-radius:999px!important;box-shadow:0 0 14px rgba(185,255,0,.55)!important}
+.sonar-nav-actions{display:flex!important;align-items:center!important;gap:10px!important;flex:0 0 auto!important}
+.sonar-icon-btn,.sonar-publish,.sonar-user{min-width:44px;height:44px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);color:var(--sonar-green);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.sonar-icon-btn:hover,.sonar-publish:hover{transform:translateY(-2px);border-color:var(--sonar-line-strong);box-shadow:0 10px 20px rgba(0,0,0,.24),0 0 16px rgba(185,255,0,.13)}
+.sonar-icon{width:18px;height:18px;position:relative;display:inline-block}
+.sonar-icon.search::before{content:"";position:absolute;left:1px;top:1px;width:11px;height:11px;border:1.8px solid currentColor;border-radius:50%}
+.sonar-icon.search::after{content:"";position:absolute;width:8px;height:1.8px;background:currentColor;border-radius:2px;transform:rotate(45deg);right:0;bottom:2px;box-shadow:0 0 8px currentColor}
+.sonar-publish{padding:0 16px;background:var(--sonar-green);color:#071006!important;border-color:rgba(185,255,0,.5);font-size:13px;font-weight:900}
+.sonar-user{padding:0 10px 0 5px;gap:8px;color:#eaf2e6!important}
+.sonar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f5d28b,#ba8841);color:#2f210c;display:grid;place-items:center;font-weight:900}
+.sonar-user b{font-size:14px;color:#f1f6ee}
+button,.btn,.action-btn,.cta-btn,.pill,.tab,.filter-chip,.smart-chip,.sample-chip,.sonar-tap{min-height:44px;touch-action:manipulation}
+a,button,.filter-chip,.tab{-webkit-tap-highlight-color:rgba(185,255,0,.18)}
+@media(max-width:1024px){.nav.sonar-unified-nav{height:auto!important;min-height:64px!important;flex-wrap:wrap!important;padding:10px 14px!important}.sonar-logo{min-width:160px}.sonar-logo__img{width:142px;height:38px}.nav.sonar-unified-nav .links,.nav.sonar-unified-nav .nav-links{order:3;width:100%;justify-content:flex-start!important;gap:22px!important;padding:2px max(4px,env(safe-area-inset-right,0px)) 0 max(4px,env(safe-area-inset-left,0px))!important;mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 18px),transparent)}}
+@media(max-width:640px){.page{padding-left:max(12px,env(safe-area-inset-left,0px))!important;padding-right:max(12px,env(safe-area-inset-right,0px))!important;padding-bottom:max(28px,env(safe-area-inset-bottom,0px))!important}.sonar-logo__img{width:122px;height:34px}.sonar-publish{display:none}.sonar-user b{display:none}.sonar-user{padding-right:5px}.nav.sonar-unified-nav .links a,.nav.sonar-unified-nav .nav-links a{font-size:13px!important;line-height:42px!important;min-height:42px!important}}
+
+</style>
+</head>
+<body>
+  <main class="page">
+    <header class="nav sonar-nav">
+      <a class="brand sonar-brand" href="./index.html" aria-label="SONAR 首页">
+        <span class="sonar-mark"><span class="sweep"></span><span class="mark-dot"></span></span>
+        <span><strong>SONAR</strong><span class="brand-sub">游戏百科雷达</span></span>
+      </a>
+      <nav class="links sonar-links" aria-label="主导航">
+        <a class="active" href="./index.html">首页</a>
+        <a href="../sonar_library_page/index.html">百科</a>
+        <a href="../sonar_search_page/index.html">游戏库</a>
+        <a href="#">资讯</a>
+        <a href="#">榜单</a>
+        <a href="#">平台</a>
+        <a href="#">社区</a>
+        <a href="#">开发者</a>
+      </nav>
+      <div class="nav-actions sonar-actions">
+        <a class="icon-btn" href="../sonar_search_page/index.html" aria-label="搜索"><span class="sonar-search-glyph">⌕</span></a>
+        <button class="publish" type="button">发布</button>
+        <div class="user"><div class="avatar">Y</div><span>Lv.28</span></div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-wire">
+        <svg class="wire-svg" viewBox="0 0 520 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0 190 C90 110, 130 210, 210 160 C290 110, 340 220, 520 120" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+          <path d="M10 170 C70 130, 120 180, 190 150 C260 120, 310 190, 500 100" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+          <path d="M20 150 C80 100, 130 145, 200 128 C280 108, 330 165, 510 84" stroke="rgba(255,255,255,.48)" stroke-width="2"/>
+          <path d="M20 125 L90 85 L138 110 L188 58 L235 90 L290 44 L350 90 L404 38 L470 98 L520 82" stroke="rgba(255,255,255,.42)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="hero-wire-right">
+        <svg class="wire-svg" viewBox="0 0 520 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0 190 C90 110, 130 210, 210 160 C290 110, 340 220, 520 120" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+          <path d="M10 170 C70 130, 120 180, 190 150 C260 120, 310 190, 500 100" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+          <path d="M20 150 C80 100, 130 145, 200 128 C280 108, 330 165, 510 84" stroke="rgba(255,255,255,.48)" stroke-width="2"/>
+          <path d="M20 125 L90 85 L138 110 L188 58 L235 90 L290 44 L350 90 L404 38 L470 98 L520 82" stroke="rgba(255,255,255,.42)" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <div class="hero-radar-wrap" aria-hidden="true">
+        <div class="hero-radar">
+          <span class="radar-cross"></span>
+        </div>
+        <div class="hero-radar-icon">
+          <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="36" cy="36" r="28"/>
+              <path d="M36 8V36H64"/>
+              <path d="M14 50c7 6 14 10 22 10 10 0 18-4 24-10"/>
+              <path d="M8 36h56"/>
+              <path d="M20 20 36 36"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <div class="eyebrow"><span class="pulse"></span>sonar live scan</div>
+        <h1>捕捉今天<br/>游戏世界的每一次更新</h1>
+        <p>今日资讯、平台促销、游戏档案、发售时间与玩家关注内容，一站式聚合到 sonar。通过智能搜索与动态雷达视图，更快发现你真正关心的游戏世界变化。</p>
+        <div class="hero-search">
+          <div class="search">
+            <input placeholder="搜索游戏名、发行商、平台、模糊线索……"/>
+            <button aria-label="search">⌕</button>
+          </div>
+        </div>
+        <div class="hero-feed">
+          <div class="feed-title">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h12M8 2v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            Radar Feed
+          </div>
+          <div class="feed-track">
+            <span><i></i>本周探测到新游 <em>16</em> 个</span>
+            <span><i></i>已汇聚新闻快报 <em>18</em> 条</span>
+            <span><i></i>当前进行中的游戏展 <em>2</em> 场</span>
+            <span><i></i>新增平台促销活动 <em>6</em> 项</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M6 16 18 4"/><path d="M9 4h9v9"/><path d="M5 20h14"/></svg>
+        </div>
+        <div class="stat-data"><b>18</b><span>今日资讯</span></div>
+        <span class="stat-glow"></span>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6M9 12h6M9 15h3"/></svg>
+        </div>
+        <div class="stat-data"><b>6</b><span>平台活动</span></div>
+        <span class="stat-glow"></span>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M5 19V6.5A1.5 1.5 0 0 1 6.5 5H19"/><path d="M8 8h11v11H8z"/><path d="M8 12h11"/></svg>
+        </div>
+        <div class="stat-data"><b>28</b><span>新游条目</span></div>
+        <span class="stat-glow"></span>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 20V8l8-4 8 4v12"/><path d="M4 12h16"/><path d="M8 20v-4h8v4"/></svg>
+        </div>
+        <div class="stat-data"><b>2</b><span>游戏展</span></div>
+        <span class="stat-glow"></span>
+      </div>
+    </section>
+
+    <section class="ticker">
+      <div class="tick"><span class="tag">快报</span><p>Steam 夏季特卖进入预热阶段</p></div>
+      <div class="tick"><span class="tag">爆料</span><p>多款动作 RPG 公开新实机演示</p></div>
+      <div class="tick"><span class="tag">百科</span><p>新增 28 款游戏的发行信息</p></div>
+      <div class="tick"><span class="tag">促销</span><p>多平台周末优惠活动更新</p></div>
+    </section>
+
+    <section class="grid">
+      <div>
+        <h2 class="section-title">今日焦点</h2>
+        <div class="focus-card">
+          <div class="focus-visual">
+            <div class="poster">
+              <div class="poster-frame">
+                <img src="sonar_assets/news/news_feature_01.png" alt="news"/>
+              </div>
+              <div class="poster-float-chip">展会专题</div>
+            </div>
+            <div class="poster-shadow-card">
+              <div class="shadow-icon">
+                <svg viewBox="0 0 24 24"><path d="M5 18h14"/><path d="M7 14h10"/><path d="M9 10h6"/><path d="M12 6v12"/></svg>
+              </div>
+              <div class="shadow-copy"><b>实时追踪</b>发售档期、重点发布与热度变化同步更新</div>
+            </div>
+          </div>
+          <div class="focus-content">
+            <div class="focus-head"><span class="tag">LIVE</span><span class="tag">展会</span><span class="tag">专题聚合</span></div>
+            <h3>夏日游戏节 2024 全程速览</h3>
+            <p>重点发布、实机演示、开发者访谈与新游首曝。专题页将整合展会时间轴、重点游戏卡片、直播回放、玩家关注度变化与相关百科入口，让资讯浏览从“看海报”升级成“可探索的事件视图”。</p>
+            <div class="focus-meta"><span>含 24 条子资讯</span><span>关联 9 款新游条目</span><span>支持一键加入收藏</span></div>
+            <div class="btns"><button class="btn">进入专题</button><button class="btn ghost">查看列表</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="section-title">本周百科雷达</h2>
+        <div class="radar-wrap">
+          <div class="mini">
+            <div class="mini-copy"><span class="tag">本周新作</span><strong>16</strong><small>已登记条目，涵盖发售时间、平台、价格与基础玩法。</small></div>
+            <div class="mini-icon">
+              <svg viewBox="0 0 64 64"><path d="M12 14h40v36H12z"/><path d="M32 12v40"/><path d="M18 22h28"/><path d="M18 32h28"/><path d="M18 42h18"/></svg>
+            </div>
+          </div>
+          <div class="mini">
+            <div class="mini-copy"><span class="tag">发售倒计时</span><strong>02</strong><small>重点关注，进入发售窗口的高热度作品会在首页持续提醒。</small></div>
+            <div class="mini-icon">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M32 20v12l10-6"/><path d="M32 12v4"/></svg>
+            </div>
+          </div>
+          <div class="mini">
+            <div class="mini-copy"><span class="tag">热搜上升</span><strong>TOP 5</strong><small>玩家检索词，反映近期被讨论与被查找最多的作品方向。</small></div>
+            <div class="mini-icon">
+              <svg viewBox="0 0 64 64"><path d="M14 50V16"/><path d="M30 50V26"/><path d="M46 50V34"/><path d="M10 50h44"/></svg>
+            </div>
+          </div>
+          <div class="mini">
+            <div class="mini-copy"><span class="tag">资料更新</span><strong>42</strong><small>价格与平台信息修订中，帮助用户快速对比版本与购买渠道。</small></div>
+            <div class="mini-icon">
+              <img src="assets/Vector_Book_blue.svg.png" alt="百科图标"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sales">
+      <h2 class="section-title">正在进行的平台促销活动</h2>
+      <div class="sale-grid">
+        <article class="sale"><div class="sale-logo"><img src="sonar_assets/platform/platform_steam.png" alt="steam"/></div><div><h3>Steam 春季特卖</h3><p>全站精选折扣中</p><span class="tag">角色扮演 / 独立 / 动作</span></div><span class="pill">查看促销</span></article>
+        <article class="sale"><div class="sale-logo"><img src="sonar_assets/platform/platform_epic.png" alt="epic"/></div><div><h3>EPIC 喜加一</h3><p>本周免费领取</p><span class="tag">限时 / 免费</span></div><span class="pill">去领取</span></article>
+        <article class="sale"><div class="sale-logo">GOG</div><div><h3>GOG 发行商周</h3><p>经典游戏与无 DRM 优惠</p><span class="tag">复古 / 单机</span></div><span class="pill">查看专题</span></article>
+        <article class="sale"><div class="sale-logo"><img src="sonar_assets/platform/platform_playstation.png" alt="playstation"/></div><div><h3>PlayStation 双倍折扣</h3><p>主机平台限时活动</p><span class="tag">PS5 / PS4</span></div><span class="pill">查看折扣</span></article>
+      </div>
+    </section>
+
+    <section class="schedule">
+      <div class="schedule-head"><h2 class="section-title">26春季第四周</h2><span class="tri"></span></div>
+      <div class="schedule-shell">
+        <div class="schedule-toolbar">
+          <div class="toolbar-note"><strong>新作发售时间轴</strong> · 下滑浏览当前时间节点内的新发售游戏，卡片已补充更完整的内容摘要、平台与开发信息。</div>
+          <div class="toolbar-side"><span class="dot"></span><span>当前节点：26春季第四周 · 共 4 款</span></div>
+        </div>
+        <div class="game-list">
+          <article class="game">
+            <div class="cover"><img src="sonar_assets/games/game_dead_space.png" alt="Dead Space Remake"/></div>
+            <div class="game-main">
+              <div class="game-topline"><h3>Dead Space Remake</h3><span class="tag">全新发售</span></div>
+              <div class="game-sub">第三人称生存恐怖 · Motive Studio / Electronic Arts</div>
+              <p>经典科幻恐怖名作的完全重制版。玩家将扮演工程师艾萨克·克拉克重返石村号，在密闭宇宙飞船中对抗失控异变体。重制版在保留肢解战斗、资源管理与压迫氛围的基础上，升级了光影、音效与舱体结构表现，并扩展了叙事沉浸感。</p>
+              <div class="chips"><span class="chip">恐怖</span><span class="chip">科幻</span><span class="chip">动作</span><span class="chip">单人</span></div>
+              <div class="meta-grid">
+                <div class="meta-item"><span class="meta-label">发售平台</span><div class="meta-value">PC / PlayStation 5 / Xbox Series X|S</div></div>
+                <div class="meta-item"><span class="meta-label">核心亮点</span><div class="meta-value">无缝飞船探索、肢解射击、音频沉浸升级</div></div>
+                <div class="meta-item"><span class="meta-label">推荐人群</span><div class="meta-value">喜欢高沉浸恐怖叙事、探索与资源管理的玩家</div></div>
+                <div class="meta-item"><span class="meta-label">百科更新</span><div class="meta-value">已补录版本差异、价格走势与媒体评价摘要</div></div>
+              </div>
+            </div>
+            <div class="game-side"><div class="release-badge"><small>发售日期</small><strong>01 / 27</strong><span>26春季第四周</span></div><div class="side-actions"><button class="btn">查看百科</button><button class="btn ghost">加入关注</button></div></div>
+          </article>
+          <article class="game">
+            <div class="cover"><img src="sonar_assets/games/game_resident_evil.jpg" alt="Resident Evil"/></div>
+            <div class="game-main">
+              <div class="game-topline"><h3>Resident Evil</h3><span class="tag">资料已更新</span></div>
+              <div class="game-sub">生存恐怖 · Capcom</div>
+              <p>围绕灾变、逃生与资源紧缺展开的经典生存恐怖系列条目。本次时间节点中重点更新了主线作品与重制版本的跨平台发行情况、售价变动、版本区别与促销状态，便于用户快速对比购买渠道与游玩顺序。</p>
+              <div class="chips"><span class="chip">生存恐怖</span><span class="chip">单人</span><span class="chip">多平台</span><span class="chip">系列作品</span></div>
+              <div class="meta-grid">
+                <div class="meta-item"><span class="meta-label">发售平台</span><div class="meta-value">PC / PlayStation / Xbox / 部分作品登陆 Switch</div></div>
+                <div class="meta-item"><span class="meta-label">核心亮点</span><div class="meta-value">探索解谜、紧张战斗、系列时间线梳理</div></div>
+                <div class="meta-item"><span class="meta-label">推荐人群</span><div class="meta-value">希望系统了解生化危机系列入坑路径与平台差异的玩家</div></div>
+                <div class="meta-item"><span class="meta-label">百科更新</span><div class="meta-value">已补录版本差异、促销信息与主要角色介绍</div></div>
+              </div>
+            </div>
+            <div class="game-side"><div class="release-badge"><small>发售日期</small><strong>01 / 30</strong><span>26春季第四周</span></div><div class="side-actions"><button class="btn">查看百科</button><button class="btn ghost">对比版本</button></div></div>
+          </article>
+          <article class="game">
+            <div class="cover"><img src="sonar_assets/games/game_fallout_new_vegas.jpg" alt="Fallout: New Vegas"/></div>
+            <div class="game-main">
+              <div class="game-topline"><h3>Fallout: New Vegas</h3><span class="tag">时间节点精选</span></div>
+              <div class="game-sub">开放世界 CRPG · Obsidian Entertainment / Bethesda Softworks</div>
+              <p>废土背景下极具代表性的角色扮演作品。游戏以莫哈维荒原为舞台，强调派系抉择、任务分支与自由构筑，是许多玩家心中的“叙事型开放世界”标杆。sonar 条目中着重整理了各版本内容、DLC 与当前可购平台信息。</p>
+              <div class="chips"><span class="chip">RPG</span><span class="chip">开放世界</span><span class="chip">剧情分支</span><span class="chip">废土</span></div>
+              <div class="meta-grid">
+                <div class="meta-item"><span class="meta-label">发售平台</span><div class="meta-value">PC / PlayStation 3 / Xbox 360</div></div>
+                <div class="meta-item"><span class="meta-label">核心亮点</span><div class="meta-value">派系系统、任务抉择、丰富 DLC 与角色构筑</div></div>
+                <div class="meta-item"><span class="meta-label">推荐人群</span><div class="meta-value">偏好文本叙事、角色扮演深度与探索自由度的玩家</div></div>
+                <div class="meta-item"><span class="meta-label">百科更新</span><div class="meta-value">新增 DLC 套装说明与系列关联条目</div></div>
+              </div>
+            </div>
+            <div class="game-side"><div class="release-badge"><small>发售日期</small><strong>02 / 01</strong><span>26春季第四周</span></div><div class="side-actions"><button class="btn">查看百科</button><button class="btn ghost">查看时间线</button></div></div>
+          </article>
+          <article class="game">
+            <div class="cover"><img src="sonar_assets/games/game_steins;gate.jpg" alt="STEINS;GATE"/></div>
+            <div class="game-main">
+              <div class="game-topline"><h3>STEINS;GATE</h3><span class="tag">剧情向推荐</span></div>
+              <div class="game-sub">科学 ADV / 视觉小说 · 5pb. / Nitroplus</div>
+              <p>以时间旅行理论为核心的高评价视觉小说作品。玩家将跟随“未来道具研究所”的成员，逐步进入看似日常却不断偏离的命运漩涡。该条目重点整理了作品世界观、角色关系、改编动画对应关系以及各版本平台情况。</p>
+              <div class="chips"><span class="chip">AVG</span><span class="chip">剧情</span><span class="chip">科幻</span><span class="chip">文字冒险</span></div>
+              <div class="meta-grid">
+                <div class="meta-item"><span class="meta-label">发售平台</span><div class="meta-value">PC / PlayStation / Xbox / Switch / 移动端</div></div>
+                <div class="meta-item"><span class="meta-label">核心亮点</span><div class="meta-value">时间线叙事、角色塑造、世界观伏笔回收</div></div>
+                <div class="meta-item"><span class="meta-label">推荐人群</span><div class="meta-value">喜欢剧情驱动、科幻悬疑与角色互动体验的玩家</div></div>
+                <div class="meta-item"><span class="meta-label">百科更新</span><div class="meta-value">新增正传与衍生作关系图、改编动画索引</div></div>
+              </div>
+            </div>
+            <div class="game-side"><div class="release-badge"><small>发售日期</small><strong>02 / 03</strong><span>26春季第四周</span></div><div class="side-actions"><button class="btn">查看百科</button><button class="btn ghost">角色关系</button></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => document.body.classList.add('loaded'), 850);
+    });
+  </script>
+
+<script>
+(function(){
+  function ready(fn){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+  ready(function(){
+    document.querySelectorAll('button,.btn,.pill,.filter-chip,.smart-chip,.tab,.action-btn,.icon-btn').forEach(function(el){
+      el.addEventListener('pointerdown', function(){ el.classList.remove('sonar-pressed'); void el.offsetWidth; el.classList.add('sonar-pressed'); }, {passive:true});
+    });
+    var chips = document.querySelectorAll('.filter-chip');
+    var resultsTitle = document.querySelector('.results-status h2');
+    chips.forEach(function(chip){
+      chip.setAttribute('role','button'); chip.tabIndex = 0;
+      function toggle(){
+        chip.classList.toggle('active');
+        document.body.classList.add('results-refreshing');
+        document.body.classList.remove('results-refreshed');
+        if(resultsTitle){
+          var base = 920 + Math.floor(Math.random()*430);
+          resultsTitle.textContent = '为你找到 ' + base.toLocaleString('zh-CN') + ' 个相关结果';
+        }
+        clearTimeout(window.__sonarRefreshTimer);
+        window.__sonarRefreshTimer=setTimeout(function(){
+          document.body.classList.remove('results-refreshing');
+          document.body.classList.add('results-refreshed');
+          setTimeout(function(){document.body.classList.remove('results-refreshed')},900);
+        },620);
+      }
+      chip.addEventListener('click', toggle);
+      chip.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); }});
+    });
+    document.querySelectorAll('input').forEach(function(input){
+      input.addEventListener('input',function(){ document.body.classList.add('sonar-typing'); clearTimeout(window.__sonarTyping); window.__sonarTyping=setTimeout(function(){document.body.classList.remove('sonar-typing')},350); });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

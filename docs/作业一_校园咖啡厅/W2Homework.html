@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#fffaf3">
+    <title>Campus Coffee · 校园咖啡点单</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="app-container" aria-label="Campus Coffee 校园咖啡点单原型">
+    <header class="status-bar">
+        <span id="clock">09:41</span>
+        <span class="status-icons"><span>Campus 5G</span><span>◒</span><span>▰</span></span>
+    </header>
+
+    <section class="store-modal-overlay" id="storeModal" aria-label="选择门店">
+        <div class="store-modal-card">
+            <div class="eyebrow modal-kicker">Campus Coffee</div>
+            <h2>先选一家附近门店</h2>
+            <p class="modal-tip">门店会影响制作时间与取餐位置，请在下单前确认。</p>
+
+            <button class="store-option" type="button"
+                    onclick="confirmStore('杭电 · 中心湖店', '距离 150m · 校园内环路 2 号')">
+                <span class="store-option-title">中心湖店 <span class="recommend-tag">推荐</span></span>
+                <span class="store-option-desc">营业中 · 预计排队 5 分钟 · 步行约 2 分钟</span>
+            </button>
+            <button class="store-option" type="button"
+                    onclick="confirmStore('杭电 · 学生活动中心店', '距离 400m · 二教西侧')">
+                <span class="store-option-title">学生活动中心店</span>
+                <span class="store-option-desc">营业中 · 预计排队 15 分钟 · 步行约 6 分钟</span>
+            </button>
+        </div>
+    </section>
+
+    <div class="view-area">
+        <section id="page-home" class="page active" aria-label="首页">
+            <div class="home-scroll">
+                <article class="hero-card">
+                    <div class="hero-top">
+                        <div class="brand-lockup">
+                            <span class="brand-mark">☕</span>
+                            <span class="brand-title">Campus Coffee</span>
+                        </div>
+                        <span class="hero-pill">今日营业 07:30–21:30</span>
+                    </div>
+                    <div class="hero-copy">
+                        <div class="eyebrow">Morning ritual</div>
+                        <h1>把清醒与松弛，装进这一杯。</h1>
+                        <p>从早八到图书馆夜读，为校园日常准备一杯刚刚好的咖啡。</p>
+                    </div>
+                </article>
+
+                <div class="home-content">
+                    <div class="section-heading">
+                        <h2>今天喝点什么？</h2>
+                        <p>预计 10 分钟取餐</p>
+                    </div>
+
+                    <article class="store-card">
+                        <div class="location-tag" id="currentLocationTag">● 尚未选择门店</div>
+                        <div class="store-name" id="currentStoreName">Campus Coffee</div>
+                        <div class="store-info" id="currentStoreInfo">等待定位门店信息…</div>
+                        <div class="pickup-row">
+                            <span class="time-badge">◷ 现在下单，约 10 分钟后取餐</span>
+                            <span class="store-distance">步行 2 min</span>
+                        </div>
+                    </article>
+
+                    <div class="order-modes">
+                        <button class="mode-btn" type="button" onclick="switchTab('menu')">
+                            <span class="mini-arrow">↗</span>
+                            <span class="mode-icon">☕</span>
+                            <span>
+                                <span class="mode-title">到店自取</span>
+                                <span class="mode-desc">提前下单，到店即取</span>
+                            </span>
+                        </button>
+                        <button class="mode-btn" type="button" onclick="switchTab('menu')">
+                            <span class="mini-arrow">↗</span>
+                            <span class="mode-icon">⌂</span>
+                            <span>
+                                <span class="mode-title">外卖配送</span>
+                                <span class="mode-desc">送至宿舍楼下</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-menu" class="page" aria-label="点单">
+            <div class="menu-top">
+                <div class="page-title-row">
+                    <div>
+                        <div class="eyebrow">Freshly brewed</div>
+                        <h1>点一杯</h1>
+                    </div>
+                    <button class="round-icon-btn" type="button"
+                            onclick="showToast('设置与反馈入口已打开')">•••</button>
+                </div>
+                <label class="search-bar">
+                    <span>⌕</span>
+                    <input id="productSearch" type="search" placeholder="搜索饮品，如：生椰拿铁" autocomplete="off">
+                </label>
+            </div>
+
+            <article class="menu-banner">
+                <div>
+                    <div class="banner-kicker">CAMPUS SPECIAL</div>
+                    <div class="banner-title">本周校园特饮上新</div>
+                    <div class="banner-sub">学生认证享全场 8.8 折</div>
+                </div>
+                <button class="banner-btn" type="button" onclick="showToast('已为你定位到本周特饮')">去看看</button>
+            </article>
+
+            <div class="menu-container">
+                <aside class="sidebar" aria-label="饮品分类">
+                    <button class="category active" type="button"
+                            onclick="selectCategory(this, '热门推荐')">热门<br>推荐</button>
+                    <button class="category" type="button"
+                            onclick="selectCategory(this, '意式咖啡')">意式<br>咖啡</button>
+                    <button class="category" type="button"
+                            onclick="selectCategory(this, '特调茶饮')">特调<br>茶饮</button>
+                </aside>
+
+                <div class="product-list">
+                    <h2 class="product-section-title" id="productSectionTitle">热门推荐</h2>
+
+                    <article class="product-item" data-search="燕麦拿铁 谷物 咖啡"
+                             onclick="openCustom('燕麦拿铁', 25)">
+                        <div class="product-img latte" role="img" aria-label="燕麦拿铁插图"></div>
+                        <div class="product-info">
+                            <div class="product-name-row">
+                                <span class="product-name">燕麦拿铁</span>
+                                <span class="hot-tag">校园爆款</span>
+                            </div>
+                            <p class="product-desc">谷物香气与醇厚咖啡的柔和交融</p>
+                            <div class="product-meta"><span>月售 1200+</span><span>99% 好评</span></div>
+                            <div class="product-price">¥25</div>
+                        </div>
+                    </article>
+
+                    <article class="product-item" data-search="生椰拿铁 椰香 咖啡"
+                             onclick="openCustom('生椰拿铁', 22)">
+                        <div class="product-img coconut" role="img" aria-label="生椰拿铁插图"></div>
+                        <div class="product-info">
+                            <div class="product-name-row">
+                                <span class="product-name">生椰拿铁</span>
+                                <span class="hot-tag">早八救星</span>
+                            </div>
+                            <p class="product-desc">清甜椰香，轻盈顺口的人气必喝</p>
+                            <div class="product-meta"><span>月售 800+</span><span>低负担</span></div>
+                            <div class="product-price">¥22</div>
+                        </div>
+                    </article>
+
+                    <article class="product-item" data-search="美式 黑咖啡 清爽"
+                             onclick="openCustom('经典美式', 18)">
+                        <div class="product-img americano" role="img" aria-label="经典美式插图"></div>
+                        <div class="product-info">
+                            <div class="product-name-row">
+                                <span class="product-name">经典美式</span>
+                            </div>
+                            <p class="product-desc">干净明亮的坚果调，适合长时间学习</p>
+                            <div class="product-meta"><span>0 糖</span><span>清爽回甘</span></div>
+                            <div class="product-price">¥18</div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-checkout" class="page" aria-label="确认订单">
+            <header class="checkout-header">
+                <button class="back-home-btn" type="button" onclick="switchTab('home')" aria-label="返回首页">‹</button>
+                确认订单
+            </header>
+
+            <div class="checkout-scroll">
+                <article class="checkout-card">
+                    <div class="card-label">取餐门店</div>
+                    <div class="checkout-store">
+                        <span class="checkout-store-icon">⌖</span>
+                        <span id="checkoutStoreName">杭电 · 中心湖店（自取）</span>
+                    </div>
+                    <div class="checkout-product">
+                        <div class="checkout-product-main">
+                            <span class="checkout-thumb"></span>
+                            <span>
+                                <span class="checkout-item-name" id="checkoutItemName">燕麦拿铁</span>
+                                <span class="checkout-spec" id="checkoutSpec">冰 / 常规糖</span>
+                            </span>
+                        </div>
+                        <span class="checkout-price">¥<span id="checkoutPrice">25</span></span>
+                    </div>
+                </article>
+
+                <article class="checkout-card">
+                    <div class="card-label">取餐时间</div>
+                    <div class="time-tabs">
+                        <button class="time-tab active" data-mode="now" type="button"
+                                onclick="switchTimeTab(this)">立即取餐 · 约 10 分钟</button>
+                        <button class="time-tab" data-mode="schedule" type="button"
+                                onclick="switchTimeTab(this)">定时取餐 · 可预约</button>
+                    </div>
+                    <div class="schedule-time" id="scheduleTimeSelector" style="display: none;">
+                        选择预约时间
+                        <input id="pickupTime" type="time" value="12:00">
+                    </div>
+                </article>
+
+                <article class="checkout-card">
+                    <div class="card-label">订单信息</div>
+                    <div class="note-row"><span>优惠券</span><span>暂无可用 ›</span></div>
+                    <div class="note-row"><span>备注</span><span>口味、包装等要求 ›</span></div>
+                    <div class="note-row"><span>餐具</span><span>无需餐具</span></div>
+                </article>
+            </div>
+
+            <div class="pay-bottom-bar">
+                <div>
+                    <div class="total-label">合计</div>
+                    <div class="total-price">¥<span id="totalPrice">25</span></div>
+                </div>
+                <button class="pay-btn" type="button" onclick="processPayment()">立即支付</button>
+            </div>
+        </section>
+
+        <section id="page-orders" class="page" aria-label="我的订单">
+            <header class="orders-header">我的订单</header>
+            <div class="order-list" id="orderListContainer">
+                <article class="order-card" onclick="openOrderDetail('active')">
+                    <div class="order-head">
+                        <span class="order-store">杭电 · 中心湖店</span>
+                        <span class="order-state">制作中</span>
+                    </div>
+                    <div class="order-product">燕麦拿铁（冰 / 常规糖）</div>
+                    <div class="order-time">下单时间：今日 09:30</div>
+                    <div class="order-live-status">
+                        <span class="pulse-dot"></span>
+                        前面还有 3 杯，预计等待 6 分钟
+                    </div>
+                </article>
+
+                <article class="order-card done" onclick="openOrderDetail('done')">
+                    <div class="order-head">
+                        <span class="order-store">杭电 · 创客空间店</span>
+                        <span class="order-state">已完成</span>
+                    </div>
+                    <div class="order-product">经典美式（热 / 无糖）</div>
+                    <div class="order-time">下单时间：2026-06-20 09:15</div>
+                </article>
+            </div>
+        </section>
+    </div>
+
+    <nav class="bottom-nav" id="mainNav" aria-label="主导航">
+        <button class="nav-item active" data-tab="home" type="button" onclick="switchTab('home', this)">
+            <span class="nav-icon">⌂</span><span>首页</span>
+        </button>
+        <button class="nav-item" data-tab="menu" type="button" onclick="switchTab('menu', this)">
+            <span class="nav-icon">☕</span><span>点单</span>
+        </button>
+        <button class="nav-item" data-tab="orders" type="button" onclick="switchTab('orders', this)">
+            <span class="nav-icon">▤</span><span>订单</span>
+        </button>
+    </nav>
+
+    <div class="overlay" id="overlay" onclick="closeCustom()"></div>
+    <section class="custom-sheet" id="customSheet" aria-label="饮品规格选择">
+        <div class="swipe-handle"></div>
+        <div class="sheet-head">
+            <div>
+                <div class="eyebrow">Customize</div>
+                <div class="sheet-title" id="customName">饮品名称</div>
+            </div>
+            <button class="sheet-close" type="button" onclick="closeCustom()" aria-label="关闭">×</button>
+        </div>
+
+        <div class="option-group">
+            <div class="option-title">温度选择</div>
+            <div class="option-tags">
+                <button class="color-tag selected" data-value="冰" type="button" onclick="pick(this)">
+                    <span class="dot" style="background:#8db7c9"></span>冰 · 推荐
+                </button>
+                <button class="color-tag" data-value="热" type="button" onclick="pick(this)">
+                    <span class="dot" style="background:#c46d58"></span>热
+                </button>
+            </div>
+        </div>
+
+        <div class="option-group">
+            <div class="option-title">甜度选择</div>
+            <div class="option-tags">
+                <button class="color-tag" data-value="无糖" type="button" onclick="pick(this)">无糖</button>
+                <button class="color-tag selected" data-value="常规糖" type="button" onclick="pick(this)">常规糖</button>
+            </div>
+        </div>
+
+        <button class="sheet-primary" type="button" onclick="addToCartAndCheckout()">
+            下一步 · ¥<span id="customPrice">25</span>
+        </button>
+    </section>
+
+    <div class="overlay" id="orderOverlay" onclick="closeOrderDetail()"></div>
+    <section class="order-detail-sheet" id="orderDetail" aria-label="订单详情">
+        <div class="swipe-handle"></div>
+        <header class="detail-header">
+            <h2>订单详情</h2>
+            <button class="sheet-close" type="button" onclick="closeOrderDetail()" aria-label="关闭">×</button>
+        </header>
+
+        <div class="sheet-scroll">
+            <article class="status-section" id="activeStatus">
+                <div class="eyebrow">Brewing now</div>
+                <div class="status-main">正在排队制作</div>
+                <div class="status-sub">排队取餐号：<span class="queue-number">A089</span></div>
+                <div class="status-sub">前方还有 3 杯，预计等待 6 分钟</div>
+                <div class="progress-container"><div class="progress-bar"></div></div>
+                <div class="action-buttons">
+                    <button class="action-btn" type="button" onclick="cancelOrder()">取消订单</button>
+                    <button class="action-btn primary" type="button"
+                            onclick="showToast('已帮你催单，咖啡师正在加紧制作')">催促一下</button>
+                </div>
+            </article>
+
+            <article class="status-section done-panel" id="doneStatus" style="display:none;">
+                <div class="eyebrow" style="color:#dce5d6">Completed</div>
+                <div class="status-main">订单已完成</div>
+                <div class="status-sub">感谢光临。你的反馈会帮助我们把下一杯做得更好。</div>
+                <div class="action-buttons">
+                    <button class="action-btn" type="button"
+                            onclick="showToast('已进入售后申请流程')">申请售后</button>
+                    <button class="action-btn primary" type="button"
+                            onclick="showToast('感谢五星好评，优惠券已到账')">评价并领券</button>
+                </div>
+            </article>
+
+            <article class="detail-info-card">
+                <div class="detail-card-title">订单信息</div>
+                <div class="info-row"><span class="info-label">下单门店</span><span id="detailStore">杭电 · 中心湖店</span></div>
+                <div class="info-row"><span class="info-label">订单编号</span><span>CC202606210089</span></div>
+                <div class="info-row"><span class="info-label">支付时间</span><span id="detailTime">今日 09:30:15</span></div>
+                <div class="info-row"><span class="info-label">取餐方式</span><span>到店自取（立即取餐）</span></div>
+                <div class="price-lines">
+                    <div class="info-row"><span class="info-label">商品总价</span><span>¥25.00</span></div>
+                    <div class="info-row"><span class="info-label">学生优惠</span><span style="color:var(--danger)">-¥0.00</span></div>
+                    <div class="info-row" style="margin-bottom:0"><strong>实付金额</strong><span style="color:var(--espresso);font-size:15px;font-weight:900">¥25.00</span></div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

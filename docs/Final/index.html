@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>心灵之海｜个人作品集</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="bubble-motion.css" />
+  <script src="bubble-motion.js" defer></script>
+  <link rel="preload" as="image" href="../assets/surface-dive/processed/cartoon-surface-beach.jpg" />
+  <link rel="preload" as="image" href="../assets/surface-dive/frames/surface-wave-frame-01.png" />
+  <link rel="preload" as="image" href="../assets/surface-dive/dive-transition/v2/dive-transition-frame-01.png" />
+  <link rel="preload" as="image" href="../assets/surface-dive/dive-transition/v2/dive-transition-frame-07.png" />
+  <link rel="preload" as="image" href="../assets/surface-dive/dive-transition/v2/dive-transition-frame-13.png" />
+  <link rel="preload" as="image" href="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-01.jpg" />
+  <style>
+    :root {
+      --night: #020815;
+      --deep: #05172d;
+      --cyan: #62eaff;
+      --white: #f2fcff;
+      --muted: #a4c4d1;
+      --line: rgba(129, 231, 255, .24);
+      --radar: #b7ff00;
+      --balance: #d0aa62;
+      --coffee: #f2a33c;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--white);
+      background: var(--night);
+      font-family: Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    body.intro-playing { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* Surface entrance */
+    .surface-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      overflow: hidden;
+      background: #f6d779;
+      transition: opacity .56s ease;
+    }
+
+    .surface-intro.is-submerged {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .surface-intro.is-hidden { display: none; }
+
+    .surface-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .surface-intro::after {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      z-index: 8;
+      border: 1px solid rgba(15, 39, 50, .24);
+      pointer-events: none;
+    }
+
+    .surface-label {
+      position: absolute;
+      left: clamp(26px, 4vw, 58px);
+      top: clamp(24px, 4vw, 52px);
+      z-index: 9;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #123044;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      transition: opacity .28s ease, transform .28s ease;
+    }
+
+    .surface-label::before {
+      content: "";
+      width: 42px;
+      height: 3px;
+      background: #06314c;
+      box-shadow: 13px 0 0 #12bfdc;
+      transform: skewX(-28deg);
+    }
+
+    .surface-copy {
+      position: absolute;
+      inset: 0;
+      z-index: 7;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      transition: opacity .24s ease, transform .34s ease;
+    }
+
+    .surface-hi,
+    .surface-dive {
+      position: absolute;
+      margin: 0;
+      text-align: center;
+      text-transform: uppercase;
+      transition:
+        opacity .22s ease,
+        transform .3s cubic-bezier(.2, .8, .2, 1),
+        letter-spacing .3s ease;
+    }
+
+    .surface-hi {
+      color: #071c2c;
+      font-size: clamp(80px, 14vw, 190px);
+      font-weight: 950;
+      line-height: .8;
+      letter-spacing: .04em;
+      text-shadow: 10px 10px 0 rgba(22, 190, 217, .20);
+    }
+
+    .surface-dive {
+      color: #fff;
+      font-size: clamp(38px, 6vw, 86px);
+      font-weight: 900;
+      line-height: .9;
+      letter-spacing: .18em;
+      opacity: 0;
+      transform: translateY(34px) scale(.92);
+      text-shadow: 7px 7px 0 rgba(0, 32, 72, .42);
+    }
+
+    .surface-dive span { display: block; }
+
+    .surface-intro.wave-mid .surface-hi {
+      opacity: 0;
+      transform: translateY(-42px) scale(.82);
+      letter-spacing: .26em;
+    }
+
+    .surface-intro.wave-mid .surface-dive {
+      opacity: 1;
+      transform: none;
+      letter-spacing: .12em;
+    }
+
+    .surface-wave-stack,
+    .surface-wave-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .surface-wave-stack { z-index: 6; }
+
+    .surface-wave-frame {
+      object-fit: fill;
+      opacity: 0;
+    }
+
+    .surface-wave-frame.is-active { opacity: 1; }
+
+    .dive-transition-stack,
+    .dive-transition-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .dive-transition-stack {
+      z-index: 9;
+      inset: -24vh -14vw;
+      width: auto;
+      height: auto;
+      overflow: hidden;
+      opacity: 0;
+      background-image: var(--dive-frame, url("../assets/surface-dive/dive-transition/v2/dive-transition-frame-01.png"));
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.02) translate3d(0, 0, 0);
+      transform-origin: 50% 42%;
+      transition: opacity .14s ease;
+      will-change: opacity, transform, filter, background-image;
+    }
+
+    .dive-transition-stack::before,
+    .dive-transition-stack::after {
+      content: "";
+      position: absolute;
+      inset: -16%;
+      pointer-events: none;
+    }
+
+    .dive-transition-stack::before {
+      z-index: 2;
+      opacity: 0;
+      background:
+        radial-gradient(ellipse at 50% 32%, rgba(255, 255, 255, .9), rgba(155, 239, 255, .42) 26%, transparent 58%),
+        repeating-linear-gradient(112deg, transparent 0 38px, rgba(255, 255, 255, .2) 40px 43px, transparent 46px 76px);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 42%, #000 0 48%, transparent 74%);
+      mask-image: radial-gradient(ellipse at 50% 42%, #000 0 48%, transparent 74%);
+      mix-blend-mode: screen;
+      transform: translate3d(0, -38%, 0) scale(1.04);
+    }
+
+    .dive-transition-stack::after {
+      z-index: 3;
+      opacity: 0;
+      background:
+        radial-gradient(circle at 12% 86%, rgba(255,255,255,.88) 0 4px, transparent 5px),
+        radial-gradient(circle at 18% 75%, rgba(255,255,255,.7) 0 2px, transparent 3px),
+        radial-gradient(circle at 78% 84%, rgba(255,255,255,.86) 0 5px, transparent 6px),
+        radial-gradient(circle at 86% 70%, rgba(255,255,255,.66) 0 2px, transparent 3px),
+        radial-gradient(circle at 48% 92%, rgba(255,255,255,.54) 0 3px, transparent 4px),
+        linear-gradient(90deg, rgba(133, 232, 255, .2), transparent 24%, transparent 76%, rgba(133, 232, 255, .2));
+      filter: blur(.2px);
+      transform: translate3d(0, 22vh, 0) scale(.88);
+    }
+
+    .dive-transition-frame {
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .dive-transition-frame.is-active { opacity: 0; }
+
+    .surface-intro.is-diving .dive-transition-stack {
+      opacity: 1;
+      animation: diveCameraDrift 2.64s cubic-bezier(.24, .72, .14, 1) both;
+    }
+
+    .surface-intro.is-diving .dive-transition-stack::before {
+      animation: diveSurfaceRush 2.64s cubic-bezier(.2, .78, .15, 1) both;
+    }
+
+    .surface-intro.is-diving .dive-transition-stack::after {
+      animation: diveBubbleRush 2.64s cubic-bezier(.2, .78, .15, 1) both;
+    }
+
+    .surface-intro.is-diving .surface-label,
+    .surface-intro.is-diving .surface-copy,
+    .surface-intro.is-diving .surface-wave-stack,
+    .surface-intro.is-diving .surface-skip {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .surface-intro.is-diving .surface-label { transform: translateY(-12px); }
+    .surface-intro.is-diving .surface-copy { transform: translateY(32px) scale(.9); }
+
+    .surface-intro.is-diving::after {
+      opacity: 0;
+      transition: opacity .24s ease;
+    }
+
+    @keyframes diveCameraDrift {
+      0% { transform: scale(1.02) translate3d(0, 0, 0) rotate(0deg); filter: saturate(1.12) brightness(1.08); }
+      18% { transform: scale(1.08) translate3d(-1.2vw, 3.5vh, 0) rotate(-.65deg); filter: saturate(1.12) brightness(1.04); }
+      42% { transform: scale(1.14) translate3d(.8vw, 8.5vh, 0) rotate(.5deg); filter: saturate(1.02) brightness(.94); }
+      68% { transform: scale(1.2) translate3d(-.5vw, 13vh, 0) rotate(-.25deg); filter: saturate(.94) brightness(.78); }
+      100% { transform: scale(1.23) translate3d(0, 17vh, 0) rotate(0deg); filter: saturate(.88) brightness(.68); }
+    }
+
+    @keyframes diveSurfaceRush {
+      0% { opacity: 0; transform: translate3d(0, -44%, 0) scale(1.04); }
+      12% { opacity: .9; transform: translate3d(0, -18%, 0) scale(1.1); }
+      28% { opacity: .5; transform: translate3d(0, 8%, 0) scale(1.16); }
+      44% { opacity: 0; transform: translate3d(0, 38%, 0) scale(1.22); }
+      100% { opacity: 0; transform: translate3d(0, 72%, 0) scale(1.28); }
+    }
+
+    @keyframes diveBubbleRush {
+      0% { opacity: 0; transform: translate3d(0, 24vh, 0) scale(.86); }
+      26% { opacity: .78; transform: translate3d(-.8vw, 8vh, 0) scale(.98); }
+      68% { opacity: .58; transform: translate3d(.6vw, -10vh, 0) scale(1.14); }
+      100% { opacity: 0; transform: translate3d(0, -24vh, 0) scale(1.28); }
+    }
+
+    .surface-skip {
+      position: absolute;
+      right: clamp(24px, 4vw, 54px);
+      bottom: clamp(24px, 4vw, 48px);
+      z-index: 10;
+      padding: 11px 16px;
+      border: 1px solid rgba(8, 39, 57, .42);
+      border-radius: 3px;
+      background: rgba(255, 244, 203, .82);
+      color: #092238;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .surface-skip:hover {
+      transform: translate(-3px, -3px);
+      background: #092238;
+      color: #fff;
+      box-shadow: 5px 5px 0 #18c8e2;
+    }
+
+    /* Deep ocean scroll */
+    .ocean-site {
+      position: relative;
+      min-height: 100vh;
+      isolation: isolate;
+      background: transparent;
+    }
+
+    .deepsea-background {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #031020;
+    }
+
+    .depth-frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      filter: brightness(.62) saturate(.92) contrast(1.08);
+      transition: opacity .16s linear;
+    }
+
+    .depth-frame.is-active { opacity: 1; }
+
+    .deepsea-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg, rgba(0, 8, 22, .12), rgba(0, 7, 18, .78)),
+        radial-gradient(circle at 50% 16%, rgba(70, 223, 255, .15), transparent 30%);
+      pointer-events: none;
+    }
+
+    .depth-silhouette {
+      position: fixed;
+      left: -8vw;
+      bottom: -14vh;
+      z-index: 1;
+      width: max(142vw, 2200px);
+      max-width: none;
+      opacity: .34;
+      filter: drop-shadow(0 -12px 20px rgba(0, 0, 0, .42));
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .memory-particles {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: var(--size);
+      aspect-ratio: 1;
+      border: 1px solid rgba(155, 237, 255, .42);
+      background: rgba(65, 219, 247, .06);
+      clip-path: polygon(50% 0, 92% 32%, 72% 100%, 12% 80%, 0 24%);
+      animation: particleFloat var(--duration) ease-in-out var(--delay) infinite alternate;
+    }
+
+    .ocean-nav {
+      position: sticky;
+      top: 18px;
+      z-index: 40;
+      width: min(1280px, calc(100% - 40px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 13px 16px;
+      border: 1px solid rgba(107, 227, 251, .38);
+      background: rgba(2, 12, 28, .82);
+      box-shadow: 7px 7px 0 rgba(16, 202, 230, .18);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      background: var(--cyan);
+      color: #031020;
+      box-shadow: 4px 4px 0 #fff;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 5px;
+    }
+
+    .nav-links a {
+      padding: 9px 12px;
+      color: rgba(232, 251, 255, .72);
+      font-size: 12px;
+      font-weight: 800;
+      transition: .18s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--cyan);
+      color: #031020;
+      box-shadow: 4px 4px 0 #fff;
+    }
+
+    .ocean-content {
+      position: relative;
+      z-index: 2;
+      width: min(1240px, calc(100% - 44px));
+      margin: 0 auto;
+      padding-bottom: 110px;
+    }
+
+    .ocean-hero {
+      min-height: 100vh;
+      display: grid;
+      align-content: center;
+      padding: 120px 0 80px;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .archive-title {
+      margin: 0;
+      max-width: 980px;
+      font-size: clamp(70px, 11vw, 164px);
+      font-weight: 950;
+      line-height: .76;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow: 12px 12px 0 rgba(0, 204, 236, .13);
+    }
+
+    .archive-title span {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(224, 250, 255, .84);
+      transform: translateX(clamp(24px, 8vw, 120px));
+    }
+
+    .hero-description {
+      max-width: 620px;
+      margin: 34px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .fragment-index {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 34px;
+    }
+
+    .fragment-index a {
+      padding: 11px 15px;
+      border: 1px solid var(--line);
+      background: rgba(2, 17, 36, .58);
+      color: #dffaff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: .2s ease;
+    }
+
+    .fragment-index a:hover {
+      transform: translate(-3px, -3px);
+      background: var(--accent, var(--cyan));
+      color: #031020;
+      box-shadow: 6px 6px 0 #fff;
+    }
+
+    .project {
+      --accent: var(--cyan);
+      min-height: 92vh;
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      gap: clamp(34px, 7vw, 92px);
+      align-items: center;
+      padding: 100px 0;
+      border-top: 1px solid rgba(113, 231, 255, .18);
+    }
+
+    .project:nth-of-type(even) {
+      grid-template-columns: 1.18fr .82fr;
+    }
+
+    .project:nth-of-type(even) .project-copy { order: 2; }
+    .project:nth-of-type(even) .project-visual { order: 1; }
+
+    .project-radar { --accent: var(--radar); }
+    .project-balance { --accent: var(--balance); }
+    .project-coffee { --accent: var(--coffee); }
+
+    .fragment-number {
+      margin: 0 0 16px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .project h2 {
+      margin: 0;
+      font-size: clamp(52px, 7vw, 104px);
+      font-weight: 950;
+      line-height: .84;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .project-type {
+      margin: 17px 0 0;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .project-description {
+      max-width: 520px;
+      margin: 24px 0 0;
+      color: #b1ced8;
+      line-height: 1.8;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border: 1px solid color-mix(in srgb, var(--accent) 54%, transparent);
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .project-link {
+      display: inline-flex;
+      margin-top: 28px;
+      padding: 12px 17px;
+      border: 1px solid var(--accent);
+      background: rgba(2, 14, 31, .72);
+      color: #fff;
+      font-weight: 900;
+      text-transform: uppercase;
+      box-shadow: 6px 6px 0 var(--accent);
+      transition: .2s ease;
+    }
+
+    .project-link:hover {
+      transform: translate(-3px, -3px);
+      background: var(--accent);
+      color: #031020;
+      box-shadow: 9px 9px 0 #fff;
+    }
+
+    .project-visual {
+      position: relative;
+      min-height: 520px;
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--accent) 58%, transparent);
+      background: #041124;
+      clip-path: polygon(0 7%, 8% 7%, 8% 0, 100% 0, 100% 93%, 92% 93%, 92% 100%, 0 100%);
+      box-shadow: 16px 18px 0 rgba(0, 6, 18, .42);
+    }
+
+    .tether-stage {
+      position: relative;
+      min-height: 600px;
+      perspective: 1100px;
+      filter: drop-shadow(0 22px 28px rgba(0, 4, 14, .44));
+    }
+
+    .tether-stage::before,
+    .tether-stage::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      top: -82px;
+      width: 4px;
+      height: 300px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(180deg, #b8c9c9 0 8px, #516b72 8px 13px);
+      box-shadow: 0 0 0 1px rgba(0, 5, 16, .5), 0 0 12px rgba(100, 229, 255, .15);
+      transform-origin: top;
+    }
+
+    .tether-stage::before { left: 22%; transform: rotate(-8deg); }
+    .tether-stage::after { right: 21%; transform: rotate(9deg); }
+
+    .seabed-anchor {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      z-index: 0;
+      width: 160px;
+      height: 42px;
+      border-radius: 50%;
+      background: #020812;
+      box-shadow: 0 -8px 0 #0d2940, 0 0 34px color-mix(in srgb, var(--accent) 18%, transparent);
+      transform: translateX(-50%);
+    }
+
+    .seabed-anchor::before,
+    .seabed-anchor::after {
+      content: "";
+      position: absolute;
+      top: -12px;
+      width: 24px;
+      height: 24px;
+      border: 4px solid #718a90;
+      border-radius: 50%;
+      background: #071525;
+    }
+
+    .seabed-anchor::before { left: 24px; }
+    .seabed-anchor::after { right: 24px; }
+
+    .tether-frame {
+      position: absolute;
+      z-index: 2;
+      display: block;
+      overflow: hidden;
+      border: 2px solid color-mix(in srgb, var(--accent) 72%, #fff 12%);
+      background: #030a16;
+      box-shadow: 10px 13px 0 rgba(0, 4, 12, .66), inset 0 0 0 6px rgba(1, 12, 25, .72);
+      transform-origin: 50% -80px;
+      animation: tetherFloat var(--float-time) ease-in-out var(--float-delay) infinite alternate;
+    }
+
+    .tether-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(145deg, rgba(255,255,255,.12), transparent 25%), linear-gradient(180deg, transparent 62%, rgba(0, 5, 16, .62));
+    }
+
+    .tether-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .45s ease, filter .45s ease;
+    }
+
+    .tether-frame:hover img { transform: scale(1.045); filter: saturate(1.15) contrast(1.03); }
+    .tether-frame-main { left: 8%; top: 80px; width: 78%; height: 420px; --float-time: 4.8s; --float-delay: -.8s; }
+    .tether-frame-side { right: -8%; top: -12px; z-index: 3; width: 38%; height: 240px; --float-time: 4.1s; --float-delay: -2.2s; }
+    .tether-frame-detail { left: -7%; bottom: 8px; z-index: 4; width: 35%; height: 220px; --float-time: 5.4s; --float-delay: -1.5s; }
+
+    .tether-label {
+      position: absolute;
+      left: 18px;
+      bottom: 15px;
+      z-index: 3;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .project-visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, transparent 45%, rgba(0, 5, 16, .74)),
+        repeating-linear-gradient(112deg, transparent 0 52px, rgba(255,255,255,.035) 52px 54px);
+      pointer-events: none;
+    }
+
+    .project-visual > img:not(.mood-chip) {
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
+      object-fit: cover;
+      transition: transform .55s cubic-bezier(.2, .8, .2, 1), filter .4s ease;
+    }
+
+    .project:hover .project-visual > img:not(.mood-chip) {
+      transform: scale(1.035);
+      filter: saturate(1.1);
+    }
+
+    .project-caption {
+      position: absolute;
+      left: 22px;
+      bottom: 20px;
+      z-index: 2;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .mood-chip {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 2;
+      width: 122px;
+      height: 166px;
+      object-fit: cover;
+      border: 1px solid var(--accent);
+      box-shadow: 7px 7px 0 rgba(0, 0, 0, .5);
+    }
+
+    .ocean-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 34px 0 0;
+      border-top: 1px solid var(--line);
+      color: rgba(219, 247, 255, .64);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    @keyframes tetherFloat {
+      from { transform: translate3d(-5px, 9px, 0) rotate(-1.4deg); }
+      to { transform: translate3d(7px, -11px, 12px) rotate(1.6deg); }
+    }
+
+    @keyframes particleFloat {
+      from { transform: translate(-6px, 9px) rotate(-8deg); opacity: .22; }
+      to { transform: translate(7px, -16px) rotate(10deg); opacity: .7; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+
+      .surface-intro,
+      .surface-intro .surface-label,
+      .surface-intro .surface-copy,
+      .surface-intro .surface-hi,
+      .surface-intro .surface-dive,
+      .surface-intro .dive-transition-stack,
+      .surface-intro .dive-transition-stack::before,
+      .surface-intro .dive-transition-stack::after {
+        transition-duration: .24s !important;
+      }
+
+      .surface-intro.is-diving .dive-transition-stack {
+        animation-duration: 2.64s !important;
+      }
+
+      .surface-intro.is-diving .dive-transition-stack::before,
+      .surface-intro.is-diving .dive-transition-stack::after {
+        animation-duration: 2.64s !important;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .project,
+      .project:nth-of-type(even) {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        padding: 80px 0;
+      }
+
+      .project:nth-of-type(even) .project-copy,
+      .project:nth-of-type(even) .project-visual {
+        order: initial;
+      }
+
+      .project-visual,
+      .project-visual > img:not(.mood-chip) {
+        min-height: 420px;
+      }
+
+      .depth-silhouette {
+        left: -54vw;
+        width: max(260vw, 1800px);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .surface-intro::after { inset: 12px; }
+      .surface-label { top: 24px; left: 26px; font-size: 10px; }
+      .surface-background { object-position: 50% center; }
+      .surface-wave-frame { object-fit: cover; object-position: center; }
+      .surface-hi { font-size: 86px; }
+      .surface-dive { font-size: 38px; }
+
+      .ocean-nav {
+        width: calc(100% - 24px);
+        top: 12px;
+      }
+
+      .nav-links { display: none; }
+      .ocean-content { width: calc(100% - 32px); }
+      .archive-title { font-size: 68px; }
+      .archive-title {
+        max-width: 100%;
+        font-size: 52px;
+      }
+      .archive-title span { transform: none; }
+      .hero-description { font-size: 15px; }
+
+      .project h2 { font-size: 54px; }
+      .project-visual,
+      .project-visual > img:not(.mood-chip) {
+        min-height: 330px;
+      }
+
+      .mood-chip {
+        width: 88px;
+        height: 120px;
+      }
+
+      .tether-stage { min-height: 450px; margin-top: 20px; }
+      .tether-stage::before, .tether-stage::after { top: -44px; height: 190px; }
+      .tether-frame-main { left: 3%; width: 88%; height: 310px; }
+      .tether-frame-side { right: -3%; width: 42%; height: 170px; }
+      .tether-frame-detail { left: -2%; width: 38%; height: 160px; }
+
+      .ocean-footer { display: grid; }
+    }
+  </style>
+</head>
+<body class="intro-playing">
+  <div class="surface-intro" id="surfaceIntro" aria-label="从海滩进入心灵之海的动画">
+    <img class="surface-background" src="../assets/surface-dive/processed/cartoon-surface-beach.jpg" alt="" />
+    <span class="surface-label">Surface / Conscious Memory</span>
+    <div class="surface-copy" aria-live="polite">
+      <p class="surface-hi">HI</p>
+      <p class="surface-dive"><span>Dive into</span><span>Memories</span></p>
+    </div>
+    <div class="surface-wave-stack" aria-hidden="true">
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-01.png" alt="" />
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-02.png" alt="" />
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-03.png" alt="" />
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-04.png" alt="" />
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-05.png" alt="" />
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-06.png" alt="" />
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-07.png" alt="" />
+      <img class="surface-wave-frame" src="../assets/surface-dive/frames/surface-wave-frame-08.png" alt="" />
+    </div>
+    <div class="dive-transition-stack" aria-hidden="true">
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-01.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-02.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-03.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-04.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-05.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-06.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-07.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-08.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-09.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-10.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-11.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-12.png" alt="" decoding="async" loading="eager" />
+      <img class="dive-transition-frame" src="../assets/surface-dive/dive-transition/v2/dive-transition-frame-13.png" alt="" decoding="async" loading="eager" />
+    </div>
+    <button class="surface-skip" type="button" id="skipIntro">Skip intro</button>
+  </div>
+
+  <main class="ocean-site">
+    <div class="deepsea-background" aria-hidden="true">
+      <img class="depth-frame is-active" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-01.jpg" alt="" />
+      <img class="depth-frame" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-02.jpg" alt="" />
+      <img class="depth-frame" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-03.jpg" alt="" />
+      <img class="depth-frame" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-04.jpg" alt="" />
+      <img class="depth-frame" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-05.jpg" alt="" />
+      <img class="depth-frame" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-06.jpg" alt="" />
+      <img class="depth-frame" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-07.jpg" alt="" />
+      <img class="depth-frame" src="../assets/portfolio-ocean/deepsea/frames/inner-ocean-frame-08.jpg" alt="" />
+    </div>
+    <div class="deepsea-overlay" aria-hidden="true"></div>
+    <img class="depth-silhouette" id="depthSilhouette" src="../assets/portfolio-ocean/silhouette/memory-silhouette-black.png" alt="" />
+    <div class="memory-particles" aria-hidden="true">
+      <i class="particle" style="left: 8%; top: 34%; --size: 24px; --duration: 3.4s; --delay: -.4s;"></i>
+      <i class="particle" style="left: 31%; top: 18%; --size: 16px; --duration: 4.1s; --delay: -1.5s;"></i>
+      <i class="particle" style="left: 61%; top: 28%; --size: 30px; --duration: 3.8s; --delay: -.9s;"></i>
+      <i class="particle" style="left: 84%; top: 58%; --size: 20px; --duration: 3.1s; --delay: -1.8s;"></i>
+    </div>
+
+    <nav class="ocean-nav" aria-label="作品集导航">
+      <a class="brand" href="#top">
+        <span class="brand-mark">Y</span>
+        <span>Yihao / Memory Archive</span>
+      </a>
+      <div class="nav-links">
+        <a href="#radar">Radar</a>
+        <a href="#balance">Balance</a>
+        <a href="#coffee">Coffee</a>
+      </div>
+    </nav>
+
+    <div class="ocean-content">
+      <section class="ocean-hero" id="top">
+        <p class="eyebrow">Below the surface / Personal portfolio</p>
+        <h1 class="archive-title">Memory<span>Fragments</span></h1>
+        <p class="hero-description">
+          从海滩表层下潜，三份作品化作沉入心灵之海的记忆碎片。滚动页面时，深海海床保持稳定，雷达、天平与咖啡剪影在前景中形成不同的观看窗口。
+        </p>
+        <div class="fragment-index">
+          <a href="#radar" style="--accent: var(--radar)">01 Radar</a>
+          <a href="#balance" style="--accent: var(--balance)">02 Balance</a>
+          <a href="#coffee" style="--accent: var(--coffee)">03 Coffee</a>
+        </div>
+      </section>
+
+      <article class="project project-radar" id="radar">
+        <div class="project-copy">
+          <p class="fragment-number">Memory fragment 01 / Radar</p>
+          <h2>SONAR</h2>
+          <p class="project-type">响应式游戏百科与搜索界面</p>
+          <p class="project-description">
+            以雷达扫描为核心视觉隐喻，整合游戏资讯、搜索、资料库和多端适配。荧光目标点与深色界面对应“寻找记忆坐标”的主题。
+          </p>
+          <div class="tags">
+            <span class="tag">Responsive Web</span>
+            <span class="tag">Search UI</span>
+            <span class="tag">Radar Motion</span>
+          </div>
+          <a class="project-link" href="project-sonar.html">查看设计档案</a>
+        </div>
+        <div class="tether-stage" aria-label="SONAR 界面截图画框">
+          <span class="seabed-anchor"></span>
+          <a class="tether-frame tether-frame-main" href="project-sonar.html">
+            <img src="../作业二_sonar/sonar_homepage/target/01.png" alt="SONAR 首页资讯雷达界面" />
+            <span class="tether-label">Homepage / Live radar</span>
+          </a>
+          <a class="tether-frame tether-frame-side" href="project-sonar.html#system">
+            <img src="../作业二_sonar/sonar_homepage/target/02.png" alt="SONAR 搜索与资料界面" />
+            <span class="tether-label">Search</span>
+          </a>
+          <a class="tether-frame tether-frame-detail" href="project-sonar.html#gallery">
+            <img src="../作业二_sonar/成品截图/情绪板.png" alt="SONAR 视觉情绪板" />
+            <span class="tether-label">Mood</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="project project-balance" id="balance">
+        <div class="project-copy">
+          <p class="fragment-number">Memory fragment 02 / Balance</p>
+          <h2>ASTLIBRA</h2>
+          <p class="project-type">幻想 RPG 系统界面与命运叙事</p>
+          <p class="project-description">
+            以天平、判断与命运为视觉核心，组织角色、任务、背包、奖励等复杂系统。古金与深蓝构成庄重、克制的幻想界面层级。
+          </p>
+          <div class="tags">
+            <span class="tag">Game UI</span>
+            <span class="tag">Fantasy RPG</span>
+            <span class="tag">System Design</span>
+          </div>
+          <a class="project-link" href="project-astlibra.html">查看设计档案</a>
+        </div>
+        <div class="tether-stage" aria-label="ASTLIBRA 系统界面截图画框">
+          <span class="seabed-anchor"></span>
+          <a class="tether-frame tether-frame-main" href="project-astlibra.html">
+            <img src="../作业三_ASTLIBRA_re/主界面.png" alt="ASTLIBRA 幻想 RPG 主界面" />
+            <span class="tether-label">Main interface / Fate</span>
+          </a>
+          <a class="tether-frame tether-frame-side" href="project-astlibra.html#gallery">
+            <img src="../作业三_ASTLIBRA_re/人物属性界面.png" alt="ASTLIBRA 人物属性界面" />
+            <span class="tether-label">Character</span>
+          </a>
+          <a class="tether-frame tether-frame-detail" href="project-astlibra.html#gallery">
+            <img src="../作业三_ASTLIBRA_re/背包界面.png" alt="ASTLIBRA 背包界面" />
+            <span class="tether-label">Inventory</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="project project-coffee" id="coffee">
+        <div class="project-copy">
+          <p class="fragment-number">Memory fragment 03 / Coffee</p>
+          <h2>Campus Coffee</h2>
+          <p class="project-type">移动端校园咖啡点单服务</p>
+          <p class="project-description">
+            将日常饮品、门店选择与点单流程视为温暖的生活记忆。咖啡棕、奶油白与海沫绿弱化深海的冷感，让最后一段碎片回到亲切的人间尺度。
+          </p>
+          <div class="tags">
+            <span class="tag">Mobile Service</span>
+            <span class="tag">Order Flow</span>
+            <span class="tag">Warm Memory</span>
+          </div>
+          <a class="project-link" href="project-coffee.html">查看设计档案</a>
+        </div>
+        <div class="tether-stage" aria-label="Campus Coffee 服务流程截图画框">
+          <span class="seabed-anchor"></span>
+          <a class="tether-frame tether-frame-main" href="project-coffee.html">
+            <img src="../作业一_校园咖啡厅/outputs/final-home.png" alt="Campus Coffee 首页" />
+            <span class="tether-label">Home / Morning ritual</span>
+          </a>
+          <a class="tether-frame tether-frame-side" href="project-coffee.html#flow">
+            <img src="../作业一_校园咖啡厅/outputs/final-menu.png" alt="Campus Coffee 点单菜单" />
+            <span class="tether-label">Menu</span>
+          </a>
+          <a class="tether-frame tether-frame-detail" href="project-coffee.html#flow">
+            <img src="../作业一_校园咖啡厅/outputs/final-order-detail.png" alt="Campus Coffee 订单详情" />
+            <span class="tether-label">Order</span>
+          </a>
+        </div>
+      </article>
+
+      <footer class="ocean-footer">
+        <span>Interface Design / Personal Portfolio</span>
+        <a href="#top">Return to surface ↑</a>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const intro = document.querySelector("#surfaceIntro");
+    const skipIntro = document.querySelector("#skipIntro");
+    const waveFrames = Array.from(document.querySelectorAll(".surface-wave-frame"));
+    const diveStack = document.querySelector(".dive-transition-stack");
+    const diveFrames = Array.from(document.querySelectorAll(".dive-transition-frame"));
+    const depthFrames = Array.from(document.querySelectorAll(".depth-frame"));
+    const depthSilhouette = document.querySelector("#depthSilhouette");
+    const waveDurations = [180, 150, 130, 120, 110, 110, 130, 230];
+    const diveDurations = [150, 145, 145, 155, 165, 170, 180, 195, 205, 225, 245, 270, 360];
+    const diveFrameSources = diveFrames.map((frame) => frame.currentSrc || frame.src || frame.getAttribute("src"));
+    let introStopped = false;
+    let depthIndex = 0;
+    let depthTimer;
+
+    const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+    const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const decodeFrame = (frame) => {
+      if (!frame) return Promise.resolve();
+      if (frame.complete && frame.naturalWidth > 0) return Promise.resolve();
+      if (typeof frame.decode === "function") return frame.decode().catch(() => undefined);
+      return new Promise((resolve) => {
+        frame.addEventListener("load", resolve, { once: true });
+        frame.addEventListener("error", resolve, { once: true });
+      });
+    };
+    const preloadFrames = (frames, timeoutMs = 1600) => {
+      const preload = Promise.all(frames.map(decodeFrame));
+      if (!timeoutMs) return preload;
+      return Promise.race([preload, wait(timeoutMs)]).catch(() => undefined);
+    };
+    const setActiveFrame = (frames, activeIndex) => {
+      frames.forEach((frame, frameIndex) => {
+        frame.classList.toggle("is-active", frameIndex === activeIndex);
+      });
+    };
+    const setDiveFrame = (activeIndex) => {
+      const src = diveFrameSources[activeIndex];
+      if (!diveStack || !src) return;
+      diveStack.style.setProperty("--dive-frame", `url("${src.replace(/"/g, "\\\"")}")`);
+      diveStack.dataset.frame = String(activeIndex + 1);
+      setActiveFrame(diveFrames, activeIndex);
+    };
+    const diveReady = preloadFrames(diveFrames, 900);
+
+    const startDepthAnimation = () => {
+      if (depthTimer || reducedMotion()) return;
+      depthTimer = window.setInterval(() => {
+        const current = depthFrames[depthIndex];
+        depthIndex = (depthIndex + 1) % depthFrames.length;
+        depthFrames[depthIndex].classList.add("is-active");
+        current.classList.remove("is-active");
+      }, 300);
+    };
+
+    const hideIntro = async (fadeMs = 560) => {
+      document.body.classList.remove("intro-playing");
+      document.body.classList.add("intro-done");
+      startDepthAnimation();
+      intro.classList.add("is-submerged");
+      await wait(fadeMs);
+      intro.classList.add("is-hidden");
+    };
+
+    const playDiveTransition = async () => {
+      if (!diveStack || !diveFrames.length) return;
+      setDiveFrame(0);
+      await preloadFrames(diveFrames.slice(0, 2), 650);
+      await diveReady;
+      intro.classList.add("is-diving");
+      setActiveFrame(waveFrames, -1);
+      await wait(70);
+      for (let index = 0; index < diveFrames.length; index += 1) {
+        setDiveFrame(index);
+        await wait(diveDurations[index] || 220);
+      }
+    };
+
+    const finishIntro = async ({ skipDive = false } = {}) => {
+      if (introStopped) return;
+      introStopped = true;
+      skipIntro.disabled = true;
+      if (!skipDive) await playDiveTransition();
+      await hideIntro(skipDive ? 360 : 640);
+    };
+
+    const playIntro = async () => {
+      await preloadFrames(waveFrames, 1200);
+      if (introStopped) return;
+      await wait(220);
+
+      for (let index = 0; index < waveFrames.length; index += 1) {
+        if (introStopped) return;
+        setActiveFrame(waveFrames, index);
+        if (index === 3) intro.classList.add("wave-mid");
+        await wait(waveDurations[index]);
+      }
+
+      await wait(120);
+      finishIntro();
+    };
+
+    skipIntro.addEventListener("click", () => finishIntro({ skipDive: true }));
+
+    let scrollTicking = false;
+    const updateDepthParallax = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      const progress = scrollY / maxScroll;
+      const distance = innerWidth < 860 ? 78 : 38;
+      depthSilhouette.style.transform = `translate3d(${-progress * distance}vw, 0, 0)`;
+      scrollTicking = false;
+    };
+
+    addEventListener("scroll", () => {
+      if (!scrollTicking) {
+        requestAnimationFrame(updateDepthParallax);
+        scrollTicking = true;
+      }
+    }, { passive: true });
+
+    updateDepthParallax();
+    playIntro();
+  </script>
+</body>
+</html>

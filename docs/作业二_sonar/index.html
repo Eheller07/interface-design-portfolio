@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SONAR 工程入口</title>
+  <style>
+    :root{--green:#b9ff00;--bg:#020403;--card:rgba(8,17,8,.78);--line:rgba(185,255,0,.22);--text:#f5f7f0;--muted:#a7b1a3;--shadow:0 20px 54px rgba(0,0,0,.42)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100svh;background:radial-gradient(circle at 20% 0,rgba(185,255,0,.12),transparent 28%),radial-gradient(circle at 80% 8%,rgba(185,255,0,.06),transparent 24%),#020403;color:var(--text);font-family:Inter,Arial,"Microsoft YaHei",sans-serif;padding:max(22px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 42px),repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 1px,transparent 1px 42px);mask-image:linear-gradient(to bottom,#000,transparent 86%)}.wrap{width:min(1180px,100%);margin:auto;position:relative}.hero{border:1px solid var(--line);border-radius:30px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.01));box-shadow:var(--shadow);padding:34px;overflow:hidden;position:relative}.hero:after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;border:1px solid rgba(185,255,0,.18);box-shadow:0 0 0 80px rgba(185,255,0,.045),0 0 0 170px rgba(185,255,0,.025)}.brand{display:flex;align-items:center;gap:18px;position:relative;z-index:1}.brand img{width:min(360px,72vw);height:auto;display:block;mix-blend-mode:screen;filter:drop-shadow(0 0 16px rgba(185,255,0,.18))}.tag{display:inline-flex;margin-top:20px;padding:8px 13px;border:1px solid rgba(185,255,0,.24);border-radius:999px;background:rgba(185,255,0,.08);color:var(--green);font-weight:900;font-size:12px;letter-spacing:.12em}.hero h1{font-size:clamp(30px,5vw,58px);line-height:1.03;margin:18px 0 12px;letter-spacing:-.04em}.hero p{max-width:760px;color:var(--muted);line-height:1.8;margin:0}.section-title{display:flex;align-items:end;justify-content:space-between;margin:26px 0 14px}.section-title h2{margin:0;font-size:24px}.section-title span{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{min-height:190px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012));border-radius:24px;padding:22px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow);transition:.25s ease;position:relative;overflow:hidden}.card:before{content:"";position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:28px;border:1px solid rgba(185,255,0,.12);transform:rotate(18deg)}.card:hover{transform:translateY(-4px);border-color:rgba(185,255,0,.46)}.card small{color:var(--green);font-weight:900;letter-spacing:.08em}.card b{font-size:28px}.card p{color:var(--muted);line-height:1.7;margin:0}.device-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.device-card{min-height:150px}.badge{position:absolute;right:20px;bottom:18px;color:#061006;background:var(--green);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900}.note{margin-top:18px;color:#818c7d;font-size:12px;line-height:1.8}@media(max-width:860px){.hero{padding:24px}.grid,.device-grid{grid-template-columns:1fr}.card{min-height:150px}.brand img{width:min(280px,80vw)}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="brand"><img src="assets/brand/sonar-wordmark.png" alt="SONAR 游戏百科雷达"></div>
+      <div class="tag">PROJECT ENTRY / RESPONSIVE PREVIEW</div>
+      <h1>SONAR 三端响应式工程入口</h1>
+      <p>本入口用于作品集检查与演示。PC 端可直接访问三大页面，也可以通过平板和手机预览入口，在桌面浏览器内查看对应端口的布局、触控区域与安全区处理。</p>
+    </section>
+
+    <div class="section-title"><h2>PC 页面入口</h2><span>直接浏览完整桌面端页面</span></div>
+    <section class="grid">
+      <a class="card" href="sonar_homepage/index.html"><small>HOME / NEWS RADAR</small><b>首页</b><p>游戏资讯快报、平台促销、新游时间轴。</p></a>
+      <a class="card" href="sonar_search_page/index.html"><small>SEARCH / LIBRARY</small><b>游戏库搜索</b><p>模糊检索、筛选条件、结果卡片与搜索情报站。</p></a>
+      <a class="card" href="sonar_library_page/index.html"><small>WIKI / DEAD SPACE</small><b>死亡空间百科</b><p>游戏简介、截图浏览、基础资料和论坛瀑布流。</p></a>
+    </section>
+
+    <div class="section-title"><h2>另外两端 Web 预览入口</h2><span>方便在 PC 浏览器内检查平板与手机端</span></div>
+    <section class="device-grid">
+      <a class="card device-card" href="tablet-preview.html"><small>TABLET WEB PREVIEW</small><b>平板端预览</b><p>模拟 834×1112 视口，检查横向滑动导航、双栏收缩、触控按钮与边缘安全区。</p><span class="badge">进入平板端</span></a>
+      <a class="card device-card" href="mobile-preview.html"><small>MOBILE WEB PREVIEW</small><b>手机版预览</b><p>模拟 390×844 视口，检查底部手势死区、顶部安全区、单列卡片与 44px 触控面积。</p><span class="badge">进入手机端</span></a>
+    </section>
+    <p class="note">说明：预览入口通过 iframe 固定视口展示页面，适合在 PC 端快速检查另外两端；最终交付页面仍然使用同一套响应式 HTML/CSS。</p>
+  </main>
+</body>
+</html>

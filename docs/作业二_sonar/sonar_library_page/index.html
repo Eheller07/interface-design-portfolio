@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SONAR Library - Dead Space</title>
+  <style>
+    :root{
+      --bg:#030503;
+      --panel:#071007;
+      --panel-2:#0b140c;
+      --panel-3:#101a10;
+      --line:rgba(185,255,0,.16);
+      --line-strong:rgba(185,255,0,.34);
+      --green:#b9ff00;
+      --green-soft:rgba(185,255,0,.12);
+      --text:#f5f7f0;
+      --muted:#9aa498;
+      --soft:#697463;
+      --shadow:0 20px 54px rgba(0,0,0,.42);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:Inter,Arial,"Microsoft YaHei",sans-serif;
+      background:
+        radial-gradient(circle at 16% 0%, rgba(185,255,0,.08), transparent 20%),
+        radial-gradient(circle at 90% 8%, rgba(185,255,0,.05), transparent 24%),
+        #020403;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.18;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 42px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 42px);
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.18));
+    }
+    .page{max-width:1460px;margin:auto;padding:18px 22px 54px}
+    .nav{
+      height:62px;border:1px solid var(--line);border-radius:20px;background:rgba(7,12,7,.82);
+      display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 18px;position:sticky;top:12px;z-index:50;backdrop-filter:blur(16px);box-shadow:var(--shadow)
+    }
+    .brand{display:flex;align-items:center;gap:12px}.logo{width:40px;height:40px;border-radius:50%;border:1px solid var(--line-strong);display:grid;place-items:center;background:rgba(185,255,0,.08);box-shadow:0 0 18px rgba(185,255,0,.18)}
+    .logo img{width:24px;height:24px;filter:brightness(0) saturate(100%) invert(88%) sepia(95%) saturate(810%) hue-rotate(33deg) brightness(106%) contrast(101%)}
+    .brand strong{display:block;font-size:24px;line-height:1;color:var(--green)}.brand span{display:block;font-size:12px;color:#dbe6d5;line-height:1.2}.links{display:flex;gap:32px;font-size:14px}.links a{color:#d2dad0;text-decoration:none;position:relative}.links .active{color:var(--green)}.links .active::after{content:"";position:absolute;left:0;right:0;bottom:-20px;height:2px;background:var(--green);box-shadow:0 0 12px rgba(185,255,0,.5)}
+    .nav-actions{display:flex;align-items:center;gap:10px}.icon-btn,.user{height:40px;border:1px solid rgba(255,255,255,.1);border-radius:999px;display:grid;place-items:center;background:rgba(255,255,255,.02)}.icon-btn{width:40px}.icon-btn img{width:18px;filter:brightness(0) saturate(100%) invert(88%) sepia(95%) saturate(810%) hue-rotate(33deg) brightness(106%) contrast(101%)}.user{display:flex;padding:0 10px 0 4px;gap:8px}.avatar{width:30px;height:30px;border-radius:50%;background:#ddbd73;color:#33210b;display:grid;place-items:center;font-weight:900}.crumb{margin:16px 2px 12px;color:#8d9b88;font-size:12px;letter-spacing:.12em;text-transform:uppercase}.crumb b{color:var(--green)}
+
+    .hero-card{position:relative;border:1px solid rgba(255,255,255,.08);border-radius:28px;background:linear-gradient(180deg,rgba(7,13,7,.94),rgba(4,8,5,.96));box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
+    .hero-card::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg, rgba(0,0,0,.82) 0%, rgba(0,0,0,.56) 48%, rgba(0,0,0,.88) 100%), url('assets/games/deadspace_cover.png') center/cover no-repeat;opacity:.72;z-index:-2;filter:saturate(.84) brightness(.78)}
+    .hero-card::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 36% 40%, rgba(185,255,0,.12), transparent 22%), radial-gradient(circle at 78% 18%, rgba(185,255,0,.08), transparent 20%);z-index:-1}
+    .hero-inner{display:grid;grid-template-columns:210px minmax(0,1fr) 310px;gap:24px;padding:26px;align-items:center}
+    .cover-card{position:relative;border-radius:24px;overflow:hidden;min-height:284px;background:#111;box-shadow:0 22px 40px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08) inset;transform:translateY(8px)}
+    .cover-card img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}.cover-card .cover-tag{position:absolute;left:14px;top:14px;padding:7px 10px;border-radius:999px;background:rgba(185,255,0,.9);color:#071006;font-size:11px;font-weight:900}.cover-card .scanline{position:absolute;left:0;right:0;height:2px;background:var(--green);box-shadow:0 0 18px rgba(185,255,0,.58);animation:scanCover 3.4s infinite ease-in-out}
+    .game-title{min-width:0}.game-title .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--green);font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:900}.game-title .eyebrow i{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 0 0 rgba(185,255,0,.58);animation:pulse 2s infinite}.game-title h1{margin:12px 0 8px;font-size:64px;line-height:.95;letter-spacing:-.05em}.game-title h2{margin:0;color:#dce8d8;font-size:22px;font-weight:500}.game-title p{margin:18px 0 0;color:#c9d4c5;line-height:1.75;font-size:15px;max-width:760px}.tag-row,.platform-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.tag{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(255,255,255,.04);color:#e9f1e5;font-size:12px}.tag.green{border-color:rgba(185,255,0,.28);background:rgba(185,255,0,.1);color:#eaffc1}.platform{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.035);font-size:12px;color:#dce6d9}.platform img{width:16px;height:16px;object-fit:contain;filter:grayscale(1) brightness(3)}
+    .quick-panel{border:1px solid rgba(185,255,0,.16);background:rgba(3,8,3,.56);backdrop-filter:blur(8px);border-radius:22px;padding:18px;display:grid;gap:14px}.quick-panel h3{margin:0;font-size:16px;color:var(--green)}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:16px;background:rgba(255,255,255,.03)}.metric small{display:block;color:#879383;font-size:11px;margin-bottom:6px}.metric strong{font-size:18px;color:#fff}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:none;border-radius:14px;padding:12px 16px;background:var(--green);color:#071006;font-weight:900;cursor:pointer}.btn.ghost{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#eef5ea}.btn img{width:14px;margin-right:7px;vertical-align:-2px;filter:brightness(0) saturate(100%) invert(5%) sepia(38%) saturate(892%) hue-rotate(58deg) brightness(90%) contrast(102%)}
+
+    .banner-section{margin-top:18px;border:1px solid rgba(255,255,255,.08);border-radius:24px;background:linear-gradient(180deg,rgba(7,12,7,.92),rgba(5,9,5,.94));box-shadow:var(--shadow);overflow:hidden}.banner-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.06)}.banner-head h2{margin:0;font-size:22px}.banner-head p{margin:4px 0 0;color:#94a08f;font-size:12px}.tabs{display:flex;align-items:center;gap:8px;overflow:auto;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.06);scrollbar-width:none}.tab{flex:0 0 auto;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;width:142px;height:72px;background:#111;position:relative;cursor:pointer;opacity:.6;transition:.35s ease}.tab img{width:100%;height:100%;object-fit:cover}.tab::after{content:attr(data-title);position:absolute;left:0;right:0;bottom:0;padding:18px 8px 7px;font-size:11px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.82));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tab.active{opacity:1;border-color:var(--green);box-shadow:0 0 0 1px rgba(185,255,0,.1),0 0 18px rgba(185,255,0,.18);transform:translateY(-3px)}
+    .banner-stage{position:relative;height:500px;background:#050805;overflow:hidden}.banner-image{position:absolute;inset:0;background-image:var(--banner);background-size:cover;background-position:center;filter:saturate(.88) brightness(.72);transform:scale(1.02);transition:background-image .35s ease, opacity .35s ease}.banner-stage.switching .banner-image{opacity:.38;transform:scale(1.05)}.banner-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.86),rgba(0,0,0,.12) 48%,rgba(0,0,0,.76)),linear-gradient(180deg,transparent,rgba(0,0,0,.82));}.banner-copy{position:absolute;left:28px;bottom:28px;max-width:560px}.banner-copy .label{display:inline-flex;padding:7px 10px;border-radius:999px;background:rgba(185,255,0,.12);border:1px solid rgba(185,255,0,.25);color:var(--green);font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.banner-copy h3{margin:12px 0 8px;font-size:36px;line-height:1.05}.banner-copy p{margin:0;color:#d2dbcf;line-height:1.7}.arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:80px;border:none;border-radius:999px;background:rgba(0,0,0,.42);color:var(--green);font-size:28px;cursor:pointer;border:1px solid rgba(185,255,0,.15);backdrop-filter:blur(6px)}.arrow.left{left:16px}.arrow.right{right:16px}.progress{position:absolute;left:28px;right:28px;bottom:0;height:3px;background:rgba(255,255,255,.08)}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--green),transparent);width:12%;transition:width .35s ease}
+
+    .info-section{margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px}.panel{border:1px solid rgba(255,255,255,.08);border-radius:24px;background:linear-gradient(180deg,rgba(8,14,8,.96),rgba(5,9,5,.96));box-shadow:var(--shadow)}.info-main{padding:22px}.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:18px}.section-title h2{margin:0;font-size:28px}.section-title small{color:#879383}.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.info-item{padding:15px;border:1px solid rgba(255,255,255,.06);border-radius:18px;background:rgba(255,255,255,.03)}.info-item small{display:block;color:#83907f;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}.info-item strong{display:block;font-size:15px;line-height:1.45}.intro-copy{margin-top:18px;color:#cdd7ca;line-height:1.8}.link-list{display:grid;gap:10px;margin-top:18px}.outlink{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:16px;border:1px solid rgba(185,255,0,.12);background:rgba(185,255,0,.045);color:#ecf6e9;text-decoration:none}.outlink span{color:var(--green)}.side-info{padding:20px}.price-card{padding:16px;border:1px solid rgba(185,255,0,.16);border-radius:20px;background:rgba(185,255,0,.06);margin-bottom:14px}.price-card small{display:block;color:#8e9c88}.price-card strong{display:block;font-size:34px;margin:8px 0;color:#fff}.side-list{display:grid;gap:10px}.side-row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}.side-row span{color:#8e9c88}.side-row b{text-align:right;color:#fff}
+
+    .divider{height:18px;margin:22px 0;border-radius:999px;background:linear-gradient(90deg,transparent,var(--green),transparent);box-shadow:0 0 24px rgba(185,255,0,.22);opacity:.86}
+    .forum-section{margin-top:0}.forum-head{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:14px}.forum-head h2{margin:0;font-size:28px}.forum-head p{margin:6px 0 0;color:#9ba797}.forum-grid{columns:3 300px;column-gap:16px}.post{break-inside:avoid;margin:0 0 16px;border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(180deg,rgba(8,14,8,.96),rgba(4,8,4,.96));overflow:hidden;box-shadow:var(--shadow);transform:translateY(18px);opacity:0;animation:postIn .7s ease forwards}.post:nth-child(2){animation-delay:.08s}.post:nth-child(3){animation-delay:.16s}.post:nth-child(4){animation-delay:.24s}.post:nth-child(5){animation-delay:.32s}.post:nth-child(6){animation-delay:.4s}.post img{width:100%;display:block;filter:saturate(.9) brightness(.8)}.post-body{padding:16px}.post-body h3{margin:0 0 8px;font-size:17px}.post-body p{margin:0;color:#aeb9aa;font-size:13px;line-height:1.7}.post-meta{display:flex;justify-content:space-between;color:#74806f;font-size:12px;margin-top:14px}.badge{color:var(--green)}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(185,255,0,.55)}70%{box-shadow:0 0 0 12px rgba(185,255,0,0)}100%{box-shadow:0 0 0 0 rgba(185,255,0,0)}}@keyframes scanCover{0%{top:-5%}50%{top:104%}100%{top:104%}}@keyframes postIn{to{opacity:1;transform:translateY(0)}}
+    @media(max-width:1100px){.links{gap:18px}.hero-inner{grid-template-columns:180px 1fr}.quick-panel{grid-column:1/-1}.info-section{grid-template-columns:1fr}.banner-stage{height:420px}.game-title h1{font-size:52px}}@media(max-width:760px){.page{padding:12px}.nav{height:auto;flex-wrap:wrap}.links{order:3;width:100%;overflow:auto;padding:6px 0}.hero-inner{grid-template-columns:1fr;padding:18px}.cover-card{min-height:360px;max-width:260px}.game-title h1{font-size:42px}.banner-stage{height:360px}.tabs{padding:10px}.tab{width:116px;height:62px}.info-grid{grid-template-columns:1fr}.forum-grid{columns:1}.banner-copy{left:18px;right:18px}.banner-copy h3{font-size:28px}.arrow{display:none}}
+  
+
+/* ===== SONAR unified identity / responsive touch system ===== */
+:root{
+  --sonar-green:#b9ff00;
+  --sonar-bg:#030503;
+  --sonar-panel:rgba(7,12,7,.86);
+  --sonar-panel-2:rgba(11,18,11,.92);
+  --sonar-border:rgba(185,255,0,.18);
+  --sonar-border-strong:rgba(185,255,0,.34);
+  --sonar-text:#f5f7f0;
+  --sonar-muted:#a2ada0;
+  --sonar-touch:48px;
+  --sonar-radius:20px;
+}
+html{scroll-padding-top:96px;-webkit-text-size-adjust:100%}
+body{min-width:320px;overscroll-behavior-y:none}
+a,button,.filter-chip,.smart-chip,.tab,.sale,.game,.post,.result-card{ -webkit-tap-highlight-color: transparent; }
+button,a{touch-action:manipulation}
+
+.sonar-nav.nav,.nav.sonar-nav{
+  height:64px;min-height:64px;
+  border:1px solid var(--sonar-border)!important;
+  border-radius:22px!important;
+  background:rgba(4,9,4,.84)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.03)!important;
+  backdrop-filter:blur(16px) saturate(1.08);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:0 18px!important;
+  position:sticky;top:max(10px, env(safe-area-inset-top));z-index:80;
+}
+.sonar-brand.brand,.brand.sonar-brand{
+  display:flex;align-items:center;gap:12px;color:var(--sonar-green)!important;text-decoration:none;flex:0 0 auto;min-width:max-content;
+}
+.sonar-brand strong{display:block!important;font-size:25px!important;letter-spacing:.02em;line-height:1!important;color:var(--sonar-green)!important;text-transform:uppercase;font-weight:950!important;text-shadow:0 0 12px rgba(185,255,0,.16)}
+.sonar-brand span span,.sonar-brand .brand-sub{display:block!important;font-size:12px!important;line-height:1.2!important;color:#dce6d8!important;font-weight:600!important;letter-spacing:.02em;text-transform:none!important}
+.sonar-mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;position:relative;flex:0 0 auto;border:1px solid var(--sonar-border-strong);background:radial-gradient(circle,rgba(185,255,0,.18),rgba(185,255,0,.03) 62%,rgba(0,0,0,.3));box-shadow:0 0 22px rgba(185,255,0,.18), inset 0 0 0 1px rgba(255,255,255,.04);overflow:hidden}
+.sonar-mark:before{content:"";position:absolute;inset:8px;border-radius:50%;border:1.5px solid var(--sonar-green);box-shadow:0 0 0 6px rgba(185,255,0,.07)}
+.sonar-mark:after{content:"";position:absolute;width:1.5px;height:34px;background:var(--sonar-green);box-shadow:0 0 10px rgba(185,255,0,.65);transform:rotate(90deg)}
+.sonar-mark .mark-dot{width:7px;height:7px;background:var(--sonar-green);border-radius:50%;z-index:1;box-shadow:0 0 14px rgba(185,255,0,.7)}
+.sonar-mark .sweep{position:absolute;inset:5px;border-radius:50%;background:conic-gradient(from 0deg, transparent 0 73%,rgba(185,255,0,.38),transparent 100%);animation:sonarMarkSweep 3.6s linear infinite}
+@keyframes sonarMarkSweep{to{transform:rotate(360deg)}}
+
+.sonar-links.links,.links.sonar-links{display:flex;align-items:center;justify-content:center;gap:clamp(18px,2.2vw,34px);font-size:14px;min-width:0;white-space:nowrap;scrollbar-width:none}
+.sonar-links::-webkit-scrollbar{display:none}
+.sonar-links a{color:#d2dad0!important;text-decoration:none!important;position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 2px;font-weight:650;opacity:.92}
+.sonar-links a.active{color:var(--sonar-green)!important;opacity:1}
+.sonar-links a.active::after{content:"";position:absolute;left:2px;right:2px;bottom:-10px;height:3px;border-radius:999px;background:var(--sonar-green);box-shadow:0 0 16px rgba(185,255,0,.6)}
+.sonar-actions.nav-actions,.nav-actions.sonar-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.sonar-actions .icon-btn,.sonar-actions .publish,.sonar-actions .user{min-width:44px;min-height:44px;height:44px;border-radius:999px!important;border:1px solid rgba(255,255,255,.10)!important;background:rgba(255,255,255,.025)!important;color:var(--sonar-green)!important;text-decoration:none;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.sonar-actions .publish{padding:0 16px;background:var(--sonar-green)!important;color:#071006!important;border-color:rgba(185,255,0,.5)!important}
+.sonar-actions .user{padding:0 10px 0 5px;gap:8px;color:#eef6ea!important}
+.sonar-actions .avatar{width:32px!important;height:32px!important;border-radius:50%;display:grid;place-items:center;background:#ddbd73!important;color:#33210b!important;font-weight:900!important}
+.sonar-search-glyph{font-size:22px;line-height:1;transform:translateY(-1px)}
+
+.btn,.pill,.search button,.search-submit,.cta-btn,.action-btn.primary,.publish{
+  transition:transform .22s ease, box-shadow .22s ease, filter .22s ease, background .22s ease;
+}
+.btn:hover,.pill:hover,.search button:hover,.search-submit:hover,.cta-btn:hover,.action-btn.primary:hover,.publish:hover{transform:translateY(-1px);box-shadow:0 0 22px rgba(185,255,0,.20)}
+.btn:active,.pill:active,.search button:active,.search-submit:active,.cta-btn:active,.action-btn:active,.filter-chip:active,.smart-chip:active{transform:scale(.98)}
+.sonar-pressed{animation:sonarPress .34s ease both}@keyframes sonarPress{0%{box-shadow:0 0 0 0 rgba(185,255,0,.35)}100%{box-shadow:0 0 0 10px rgba(185,255,0,0)}}
+
+/* interactive scan on search focus */
+.search-shell,.search{position:relative;overflow:hidden}
+.search-shell::after,.search::after{content:"";position:absolute;inset:-1px;pointer-events:none;opacity:0;transform:translateX(-130%);background:linear-gradient(105deg,transparent 0 38%,rgba(185,255,0,.20) 48%,rgba(255,255,255,.13) 50%,rgba(185,255,0,.16) 52%,transparent 64%);mix-blend-mode:screen}
+.search-shell:focus-within,.search:focus-within{border-color:rgba(185,255,0,.62)!important;box-shadow:0 0 0 2px rgba(185,255,0,.08),0 0 30px rgba(185,255,0,.18),0 24px 40px rgba(0,0,0,.32)!important}
+.search-shell:focus-within::after,.search:focus-within::after{opacity:1;animation:sonarSearchSweep 1.45s ease infinite}
+@keyframes sonarSearchSweep{0%{transform:translateX(-130%)}60%,100%{transform:translateX(130%)}}
+
+/* result refresh feedback shared by game-library page */
+body.results-refreshing .results-col > .panel,body.results-refreshing .result-card{filter:blur(5px) brightness(.7);transform:translateY(14px) scale(.985);opacity:.56;transition:.28s ease}
+.results-col{position:relative}.results-col::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--sonar-green),transparent);opacity:0;transform:translateX(-110%);box-shadow:0 0 18px rgba(185,255,0,.5);pointer-events:none;z-index:5}
+body.results-refreshing .results-col::after{opacity:1;animation:sonarResultScan .72s ease}@keyframes sonarResultScan{to{transform:translateX(110%)}}
+body.results-refreshed .result-card{animation:sonarResultPop .58s cubic-bezier(.22,1,.36,1) both}.result-card:nth-of-type(2){animation-delay:.04s}.result-card:nth-of-type(3){animation-delay:.09s}.result-card:nth-of-type(4){animation-delay:.14s}.result-card:nth-of-type(5){animation-delay:.19s}@keyframes sonarResultPop{from{opacity:.35;filter:blur(5px);transform:translateY(22px) scale(.975)}to{opacity:1;filter:none;transform:none}}
+
+/* tablet and mobile dead-zone handling */
+@media (pointer:coarse){
+  .btn,.pill,.search button,.search-submit,.cta-btn,.action-btn,.filter-chip,.smart-chip,.tab,.icon-btn,.sonar-links a{min-height:var(--sonar-touch)}
+  .links a,.sonar-links a{padding-left:6px;padding-right:6px}
+}
+@media (max-width:1180px) and (min-width:761px){
+  .page{padding-left:max(18px,calc(env(safe-area-inset-left) + 18px))!important;padding-right:max(18px,calc(env(safe-area-inset-right) + 18px))!important}
+  .sonar-nav.nav{gap:14px}
+  .sonar-links.links{gap:22px;overflow-x:auto;justify-content:flex-start;flex:1;padding:0 6px 4px}
+  .sonar-actions .publish{display:none}
+  .hero-content,.hero-inner{touch-action:pan-y}
+}
+@media (max-width:760px){
+  html{scroll-padding-top:132px}
+  .page{padding-left:max(12px,calc(env(safe-area-inset-left) + 12px))!important;padding-right:max(12px,calc(env(safe-area-inset-right) + 12px))!important;padding-bottom:max(28px,calc(env(safe-area-inset-bottom) + 28px))!important}
+  .sonar-nav.nav{height:auto!important;min-height:0;align-items:center;flex-wrap:wrap;padding:12px 12px 10px!important;top:max(8px,env(safe-area-inset-top));border-radius:18px!important;gap:10px}
+  .sonar-brand strong{font-size:21px!important}.sonar-brand .brand-sub{font-size:11px!important}.sonar-mark{width:38px;height:38px}
+  .sonar-actions{margin-left:auto}.sonar-actions .publish{display:none!important}.sonar-actions .user span{display:none}.sonar-actions .user{padding:0 5px!important}.sonar-actions .icon-btn{width:44px}
+  .sonar-links.links{order:3;width:100%;justify-content:flex-start;overflow-x:auto;gap:14px;padding:4px 6px 2px;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%)}
+  .sonar-links a{scroll-snap-align:start;font-size:13px;min-width:44px;padding:0 4px}.sonar-links a.active::after{bottom:-4px;height:2px}
+  .search-shell,.search{border-radius:18px!important}.search-input{min-width:0}.search-submit,.search button{flex:0 0 54px!important;width:54px!important;border-radius:14px!important}
+  .hero,.hero-card,.banner-section,.panel,.schedule-shell{border-radius:20px!important}
+  .result-card,.sale,.game,.post{border-radius:18px!important}
+  .forum-grid{column-gap:0!important}
+}
+@media (max-width:430px){
+  .sonar-brand .brand-sub{display:none!important}.sonar-mark{width:34px;height:34px}.sonar-actions .user{display:none!important}
+}
+
+  
+/* ===== SONAR final unified identity patch ===== */
+:root{--sonar-green:#b9ff00;--sonar-bg:#020403;--sonar-panel:rgba(7,12,7,.86);--sonar-panel2:rgba(11,18,11,.9);--sonar-line:rgba(185,255,0,.22);--sonar-line-strong:rgba(185,255,0,.42);--sonar-text:#f5f7f0;--sonar-muted:#a7b1a3;--sonar-shadow:0 18px 46px rgba(0,0,0,.38)}
+html{scroll-padding-top:calc(84px + env(safe-area-inset-top,0px))}
+body{background-color:var(--sonar-bg)!important}
+.nav.sonar-unified-nav{height:64px!important;min-height:64px!important;border:1px solid var(--sonar-line)!important;border-radius:22px!important;background:rgba(4,8,4,.84)!important;box-shadow:0 18px 46px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.035)!important;backdrop-filter:blur(18px)!important;padding:0 18px!important;display:flex!important;align-items:center!important;gap:18px!important;position:sticky!important;top:max(12px,env(safe-area-inset-top,0px))!important;z-index:200!important}
+.sonar-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--sonar-text);min-width:190px}
+.sonar-logo__img{width:164px;height:42px;object-fit:contain;object-position:left center;display:block;filter:drop-shadow(0 0 10px rgba(185,255,0,.14));mix-blend-mode:screen}
+.sonar-logo__sub{display:none;color:var(--sonar-green);font-size:11px;letter-spacing:.16em;white-space:nowrap;text-transform:uppercase}
+.nav.sonar-unified-nav .brand{flex:0 0 auto!important;margin:0!important;padding:0!important}
+.nav.sonar-unified-nav .links,.nav.sonar-unified-nav .nav-links{flex:1 1 auto!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:26px!important;min-width:0!important;overflow-x:auto!important;scrollbar-width:none!important;white-space:nowrap!important}
+.nav.sonar-unified-nav .links::-webkit-scrollbar,.nav.sonar-unified-nav .nav-links::-webkit-scrollbar{display:none}
+.nav.sonar-unified-nav .links a,.nav.sonar-unified-nav .nav-links a{color:#d8e0d4!important;text-decoration:none!important;font-size:14px!important;line-height:44px!important;min-height:44px!important;padding:0 2px!important;position:relative!important}
+.nav.sonar-unified-nav .links a.sonar-active,.nav.sonar-unified-nav .nav-links a.sonar-active{color:var(--sonar-green)!important;font-weight:800!important}
+.nav.sonar-unified-nav .links a.sonar-active::after,.nav.sonar-unified-nav .nav-links a.sonar-active::after{content:""!important;position:absolute!important;left:0!important;right:0!important;bottom:0!important;height:3px!important;background:var(--sonar-green)!important;border-radius:999px!important;box-shadow:0 0 14px rgba(185,255,0,.55)!important}
+.sonar-nav-actions{display:flex!important;align-items:center!important;gap:10px!important;flex:0 0 auto!important}
+.sonar-icon-btn,.sonar-publish,.sonar-user{min-width:44px;height:44px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);color:var(--sonar-green);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.sonar-icon-btn:hover,.sonar-publish:hover{transform:translateY(-2px);border-color:var(--sonar-line-strong);box-shadow:0 10px 20px rgba(0,0,0,.24),0 0 16px rgba(185,255,0,.13)}
+.sonar-icon{width:18px;height:18px;position:relative;display:inline-block}
+.sonar-icon.search::before{content:"";position:absolute;left:1px;top:1px;width:11px;height:11px;border:1.8px solid currentColor;border-radius:50%}
+.sonar-icon.search::after{content:"";position:absolute;width:8px;height:1.8px;background:currentColor;border-radius:2px;transform:rotate(45deg);right:0;bottom:2px;box-shadow:0 0 8px currentColor}
+.sonar-publish{padding:0 16px;background:var(--sonar-green);color:#071006!important;border-color:rgba(185,255,0,.5);font-size:13px;font-weight:900}
+.sonar-user{padding:0 10px 0 5px;gap:8px;color:#eaf2e6!important}
+.sonar-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f5d28b,#ba8841);color:#2f210c;display:grid;place-items:center;font-weight:900}
+.sonar-user b{font-size:14px;color:#f1f6ee}
+button,.btn,.action-btn,.cta-btn,.pill,.tab,.filter-chip,.smart-chip,.sample-chip,.sonar-tap{min-height:44px;touch-action:manipulation}
+a,button,.filter-chip,.tab{-webkit-tap-highlight-color:rgba(185,255,0,.18)}
+@media(max-width:1024px){.nav.sonar-unified-nav{height:auto!important;min-height:64px!important;flex-wrap:wrap!important;padding:10px 14px!important}.sonar-logo{min-width:160px}.sonar-logo__img{width:142px;height:38px}.nav.sonar-unified-nav .links,.nav.sonar-unified-nav .nav-links{order:3;width:100%;justify-content:flex-start!important;gap:22px!important;padding:2px max(4px,env(safe-area-inset-right,0px)) 0 max(4px,env(safe-area-inset-left,0px))!important;mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 18px),transparent)}}
+@media(max-width:640px){.page{padding-left:max(12px,env(safe-area-inset-left,0px))!important;padding-right:max(12px,env(safe-area-inset-right,0px))!important;padding-bottom:max(28px,env(safe-area-inset-bottom,0px))!important}.sonar-logo__img{width:122px;height:34px}.sonar-publish{display:none}.sonar-user b{display:none}.sonar-user{padding-right:5px}.nav.sonar-unified-nav .links a,.nav.sonar-unified-nav .nav-links a{font-size:13px!important;line-height:42px!important;min-height:42px!important}}
+
+</style>
+</head>
+<body>
+  <main class="page">
+    <header class="nav sonar-nav">
+      <a class="brand sonar-brand" href="../sonar_homepage/index.html" aria-label="SONAR 首页">
+        <span class="sonar-mark"><span class="sweep"></span><span class="mark-dot"></span></span>
+        <span><strong>SONAR</strong><span class="brand-sub">游戏百科雷达</span></span>
+      </a>
+      <nav class="links sonar-links" aria-label="主导航">
+        <a href="../sonar_homepage/index.html">首页</a>
+        <a class="active" href="./index.html">百科</a>
+        <a href="../sonar_search_page/index.html">游戏库</a>
+        <a href="#">资讯</a>
+        <a href="#">榜单</a>
+        <a href="#">平台</a>
+        <a href="#">社区</a>
+        <a href="#">开发者</a>
+      </nav>
+      <div class="nav-actions sonar-actions">
+        <a class="icon-btn" href="../sonar_search_page/index.html" aria-label="搜索"><span class="sonar-search-glyph">⌕</span></a>
+        <button class="publish" type="button">发布</button>
+        <div class="user"><div class="avatar">Y</div><span>Lv.28</span></div>
+      </div>
+    </header>
+    <div class="crumb">当前位置 / 游戏库 / 生存恐怖 / <b>死亡空间</b></div>
+
+    <section class="hero-card">
+      <div class="hero-inner">
+        <div class="cover-card"><img src="assets/games/deadspace_cover.png" alt="Dead Space poster"><span class="cover-tag">百科档案</span><span class="scanline"></span></div>
+        <div class="game-title">
+          <div class="eyebrow"><i></i>USG Ishimura Archive</div>
+          <h1>死亡空间</h1>
+          <h2>Dead Space Remake</h2>
+          <p>工程师艾萨克·克拉克被派往失联的行星裂解舰“石村号”执行维修任务，却在幽闭的舰体中遭遇名为 Necromorph 的异变生物。本页面作为 SONAR 百科样本，整合游戏海报、实机截图、发售信息、平台与购买入口，并提供玩家讨论瀑布流。</p>
+          <div class="tag-row"><span class="tag green">生存恐怖</span><span class="tag">第三人称射击</span><span class="tag">科幻</span><span class="tag">单人</span><span class="tag">重制版</span></div>
+          <div class="platform-row"><span class="platform"><img src="assets/platform/steam.png">Steam</span><span class="platform"><img src="assets/platform/playstation.png">PlayStation 5</span><span class="platform"><img src="assets/platform/xbox.png">Xbox Series X|S</span></div>
+        </div>
+        <aside class="quick-panel">
+          <h3>快速索引</h3>
+          <div class="metric-grid"><div class="metric"><small>发售日期</small><strong>2023 / 01 / 27</strong></div><div class="metric"><small>开发商</small><strong>Motive Studio</strong></div><div class="metric"><small>发行商</small><strong>Electronic Arts</strong></div><div class="metric"><small>百科完整度</small><strong>92%</strong></div></div>
+          <div class="hero-actions"><button class="btn">查看购买</button><button class="btn ghost"><img src="assets/icons/bookmark.svg">加入收藏</button></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="banner-section">
+      <div class="banner-head"><div><h2>游戏海报 / 简介 / 截图</h2><p>切换 banner 可从封面展示过渡至游戏内截图，符合样稿中的横向浏览区。</p></div><button class="btn ghost" id="autoBtn">自动轮播：开</button></div>
+      <div class="tabs" id="thumbs"></div>
+      <div class="banner-stage" id="stage">
+        <div class="banner-image" id="bannerImage"></div><div class="banner-overlay"></div>
+        <button class="arrow left" id="prev">‹</button><button class="arrow right" id="next">›</button>
+        <div class="banner-copy"><span class="label" id="bannerLabel">poster</span><h3 id="bannerTitle">石村号失联档案</h3><p id="bannerDesc">从海报到实机画面，快速浏览死亡空间的核心视觉与玩法场景。</p></div>
+        <div class="progress"><i id="progress"></i></div>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <article class="panel info-main">
+        <div class="section-title"><div><h2>游戏信息</h2><small>发行、平台、配置与百科入口</small></div><span class="tag green">已校验</span></div>
+        <div class="info-grid">
+          <div class="info-item"><small>原作 / 重制</small><strong>2008 原作 / 2023 完全重制</strong></div>
+          <div class="info-item"><small>首发平台</small><strong>PC、PS5、Xbox Series X|S</strong></div>
+          <div class="info-item"><small>游戏模式</small><strong>单人剧情战役</strong></div>
+          <div class="info-item"><small>运行配置</small><strong>64 位系统、SSD 推荐、支持光追</strong></div>
+          <div class="info-item"><small>语言支持</small><strong>界面 / 字幕多语言，含简体中文</strong></div>
+          <div class="info-item"><small>内容提醒</small><strong>血腥、惊悚、肢解表现</strong></div>
+        </div>
+        <p class="intro-copy">《死亡空间》重制版保留了原作中“战略肢解”的战斗逻辑，玩家需要针对怪物肢体进行精准射击，并在弹药、医疗包与武器升级之间进行资源取舍。新版强化了环境音效、灯光层次和无缝舰体探索，让“石村号”成为更连贯、更压迫的恐怖空间。</p>
+        <div class="link-list"><a class="outlink" href="#"><b>Steam 商店页面</b><span>前往 ›</span></a><a class="outlink" href="#"><b>PlayStation Store 页面</b><span>前往 ›</span></a><a class="outlink" href="#"><b>Xbox 商店页面</b><span>前往 ›</span></a><a class="outlink" href="#"><b>官方支持与补丁记录</b><span>查看 ›</span></a></div>
+      </article>
+      <aside class="panel side-info">
+        <div class="price-card"><small>当前参考价格</small><strong>¥248</strong><span class="tag green">促销监测中</span></div>
+        <div class="side-list"><div class="side-row"><span>玩家评分</span><b>特别好评</b></div><div class="side-row"><span>通关时长</span><b>12 - 16 小时</b></div><div class="side-row"><span>存档类型</span><b>单机本地</b></div><div class="side-row"><span>手柄支持</span><b>完整支持</b></div><div class="side-row"><span>云存档</span><b>平台相关</b></div></div>
+      </aside>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="forum-section">
+      <div class="forum-head"><div><h2>石村号通讯板</h2><p>游戏相关论坛与玩家分享区，使用图文板块瀑布流组织攻略、截图、心得与考据。</p></div><button class="btn">发布讨论</button></div>
+      <div class="forum-grid">
+        <article class="post"><img src="assets/games/scene_01.png" alt="scene"><div class="post-body"><h3>第一章环境氛围为什么这么压迫？</h3><p>灯光与机械噪音共同制造了“船体仍在运转，但人类秩序已经消失”的错觉。</p><div class="post-meta"><span>@Ishimura-47</span><span class="badge">128 回复</span></div></div></article>
+        <article class="post"><img src="assets/games/scene_02.png" alt="scene"><div class="post-body"><h3>零重力关卡路线整理</h3><p>记录多个关键舱室的补给点与遭遇战触发位置，适合高难度流程前查阅。</p><div class="post-meta"><span>@NodeHunter</span><span class="badge">收藏 426</span></div></div></article>
+        <article class="post"><img src="assets/games/scene_03.png" alt="scene"><div class="post-body"><h3>等离子切割器是否足够通关？</h3><p>在升级路线合理的情况下，初始武器依然是最稳定的肢解工具。</p><div class="post-meta"><span>@CutterOnly</span><span class="badge">热议</span></div></div></article>
+        <article class="post"><img src="assets/games/scene_04.png" alt="scene"><div class="post-body"><h3>重制版美术对比原作</h3><p>新版在湿度、烟雾、逆光和金属反射上更强调空间深度，也让敌人剪影更难预判。</p><div class="post-meta"><span>@ArtLog</span><span class="badge">图集</span></div></div></article>
+        <article class="post"><img src="assets/games/scene_05.png" alt="scene"><div class="post-body"><h3>资源管理小贴士</h3><p>不要平均升级所有武器，优先建立一套稳定的主武器与生存属性路线。</p><div class="post-meta"><span>@Survive</span><span class="badge">攻略</span></div></div></article>
+        <article class="post"><img src="assets/games/scene_06.png" alt="scene"><div class="post-body"><h3>石村号空间叙事考据</h3><p>关卡结构通过封锁、断电与维修路径反复强化“工程师身份”的行动逻辑。</p><div class="post-meta"><span>@LoreScan</span><span class="badge">考据</span></div></div></article>
+      </div>
+    </section>
+  </main>
+  <script>
+    const banners = [
+      {img:'assets/games/deadspace_cover.png', label:'poster', title:'石村号失联档案', desc:'从海报到实机画面，快速浏览死亡空间的核心视觉与玩法场景。'},
+      {img:'assets/games/scene_01.png', label:'archive 01', title:'幽闭舱室与异变阴影', desc:'雷达记录到生物污染迹象，舰体内部的工业结构与怪物剪影共同构成强压迫感。'},
+      {img:'assets/games/scene_02.png', label:'archive 02', title:'失重环境遭遇战', desc:'零重力段落改变了玩家对空间方向的判断，也让敌人从更多角度逼近。'},
+      {img:'assets/games/scene_03.png', label:'archive 03', title:'战略肢解战斗', desc:'攻击肢体而不是身体中心，是死亡空间系列最具辨识度的战斗规则。'},
+      {img:'assets/games/scene_04.png', label:'archive 04', title:'舰桥外部残骸视野', desc:'开阔场景中的低能见度与强背光，让科幻恐怖氛围从室内延伸到舰外。'},
+      {img:'assets/games/scene_07.png', label:'archive 05', title:'工程师的归航路线', desc:'艾萨克的行动始终围绕维修、重启与逃生展开，玩家的身份感非常明确。'}
+    ];
+    let current=0, auto=true, timer=null;
+    const thumbs=document.getElementById('thumbs'), stage=document.getElementById('stage'), img=document.getElementById('bannerImage'), title=document.getElementById('bannerTitle'), desc=document.getElementById('bannerDesc'), label=document.getElementById('bannerLabel'), prog=document.getElementById('progress'), autoBtn=document.getElementById('autoBtn');
+    banners.forEach((b,i)=>{const t=document.createElement('button');t.className='tab';t.dataset.title=b.title;t.innerHTML=`<img src="${b.img}" alt="${b.title}">`;t.onclick=()=>setBanner(i);thumbs.appendChild(t);});
+    function setBanner(i){current=(i+banners.length)%banners.length;stage.classList.add('switching');setTimeout(()=>{const b=banners[current];img.style.setProperty('--banner',`url('${b.img}')`);title.textContent=b.title;desc.textContent=b.desc;label.textContent=b.label;prog.style.width=((current+1)/banners.length*100)+'%';[...thumbs.children].forEach((t,idx)=>t.classList.toggle('active',idx===current));stage.classList.remove('switching');},160)}
+    document.getElementById('prev').onclick=()=>setBanner(current-1);document.getElementById('next').onclick=()=>setBanner(current+1);autoBtn.onclick=()=>{auto=!auto;autoBtn.textContent='自动轮播：'+(auto?'开':'关')};
+    function loop(){if(auto)setBanner(current+1);timer=setTimeout(loop,4200)}
+    setBanner(0);timer=setTimeout(loop,4200);
+  </script>
+
+<script>
+(function(){
+  function ready(fn){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', fn); else fn(); }
+  ready(function(){
+    document.querySelectorAll('button,.btn,.pill,.filter-chip,.smart-chip,.tab,.action-btn,.icon-btn').forEach(function(el){
+      el.addEventListener('pointerdown', function(){ el.classList.remove('sonar-pressed'); void el.offsetWidth; el.classList.add('sonar-pressed'); }, {passive:true});
+    });
+    var chips = document.querySelectorAll('.filter-chip');
+    var resultsTitle = document.querySelector('.results-status h2');
+    chips.forEach(function(chip){
+      chip.setAttribute('role','button'); chip.tabIndex = 0;
+      function toggle(){
+        chip.classList.toggle('active');
+        document.body.classList.add('results-refreshing');
+        document.body.classList.remove('results-refreshed');
+        if(resultsTitle){
+          var base = 920 + Math.floor(Math.random()*430);
+          resultsTitle.textContent = '为你找到 ' + base.toLocaleString('zh-CN') + ' 个相关结果';
+        }
+        clearTimeout(window.__sonarRefreshTimer);
+        window.__sonarRefreshTimer=setTimeout(function(){
+          document.body.classList.remove('results-refreshing');
+          document.body.classList.add('results-refreshed');
+          setTimeout(function(){document.body.classList.remove('results-refreshed')},900);
+        },620);
+      }
+      chip.addEventListener('click', toggle);
+      chip.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); }});
+    });
+    document.querySelectorAll('input').forEach(function(input){
+      input.addEventListener('input',function(){ document.body.classList.add('sonar-typing'); clearTimeout(window.__sonarTyping); window.__sonarTyping=setTimeout(function(){document.body.classList.remove('sonar-typing')},350); });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

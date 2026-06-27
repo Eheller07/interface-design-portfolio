@@ -1,0 +1,1473 @@
+:root {
+    --espresso: #3a241c;
+    --espresso-2: #5a3829;
+    --coffee: #7c523b;
+    --caramel: #c98d57;
+    --oat: #f6efe5;
+    --cream: #fffaf3;
+    --paper: #fffdf9;
+    --sage: #75816d;
+    --sage-soft: #e8ecdf;
+    --ink: #28221f;
+    --muted: #8b7f78;
+    --line: rgba(74, 48, 36, 0.11);
+    --danger: #bf594a;
+    --warning: #b87535;
+    --shadow-sm: 0 8px 24px rgba(64, 40, 29, 0.08);
+    --shadow-md: 0 18px 45px rgba(48, 29, 21, 0.16);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: var(--ink);
+    background:
+        radial-gradient(circle at 20% 15%, rgba(201, 141, 87, 0.2), transparent 25%),
+        radial-gradient(circle at 80% 80%, rgba(117, 129, 109, 0.2), transparent 28%),
+        #ddd4ca;
+    font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+.app-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 390px;
+    height: 100vh;
+    max-height: 844px;
+    overflow: hidden;
+    background: var(--cream);
+    box-shadow: var(--shadow-md);
+    isolation: isolate;
+}
+
+.app-container::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: "";
+    background-image: url("assets/coffee-pattern.png");
+    background-size: 380px;
+    opacity: 0.025;
+    pointer-events: none;
+}
+
+@media (min-width: 500px) and (min-height: 900px) {
+    .app-container {
+        border: 7px solid rgba(58, 36, 28, 0.92);
+        border-radius: 38px;
+    }
+}
+
+.status-bar {
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 42px;
+    padding: 8px 20px 5px;
+    color: var(--espresso);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    background: rgba(255, 250, 243, 0.86);
+    backdrop-filter: blur(15px);
+}
+
+.status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.view-area {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.page {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    background: rgba(255, 250, 243, 0.92);
+}
+
+.page.active {
+    display: flex;
+    animation: page-in 0.32s cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: translateY(7px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.eyebrow {
+    color: var(--caramel);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.section-heading h2 {
+    color: var(--espresso);
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 22px;
+    line-height: 1.15;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.home-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 94px;
+    scrollbar-width: none;
+}
+
+.home-scroll::-webkit-scrollbar,
+.product-list::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar,
+.order-list::-webkit-scrollbar,
+.sheet-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.hero-card {
+    position: relative;
+    min-height: 296px;
+    margin: 6px 14px 0;
+    overflow: hidden;
+    border-radius: 28px;
+    color: white;
+    background:
+        linear-gradient(180deg, rgba(35, 21, 16, 0.05) 32%, rgba(35, 21, 16, 0.88) 100%),
+        url("assets/campus-coffee-hero.png") center / cover;
+    box-shadow: 0 20px 45px rgba(72, 44, 31, 0.2);
+}
+
+.hero-card::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.hero-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px;
+}
+
+.brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.brand-mark {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 50%;
+    color: var(--espresso);
+    background: rgba(255, 250, 243, 0.82);
+    box-shadow: 0 6px 20px rgba(44, 28, 21, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.brand-title {
+    font-family: Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 8px rgba(36, 22, 16, 0.25);
+}
+
+.hero-pill {
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    background: rgba(58, 36, 28, 0.38);
+    backdrop-filter: blur(9px);
+}
+
+.hero-copy {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    left: 18px;
+    z-index: 1;
+}
+
+.hero-copy h1 {
+    max-width: 290px;
+    margin: 7px 0 8px;
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 30px;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+}
+
+.hero-copy p {
+    max-width: 265px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.home-content {
+    padding: 20px 16px 24px;
+}
+
+.store-card {
+    position: relative;
+    overflow: hidden;
+    padding: 17px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(255, 253, 249, 0.94);
+    box-shadow: var(--shadow-sm);
+}
+
+.store-card::after {
+    position: absolute;
+    top: -42px;
+    right: -35px;
+    width: 125px;
+    height: 125px;
+    content: "";
+    border-radius: 50%;
+    background: var(--sage-soft);
+    opacity: 0.72;
+}
+
+.location-tag {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 9px;
+    color: var(--sage);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.store-name {
+    position: relative;
+    z-index: 1;
+    padding-right: 55px;
+    color: var(--espresso);
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1.35;
+}
+
+.store-info {
+    position: relative;
+    z-index: 1;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.pickup-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 13px;
+    border-top: 1px dashed var(--line);
+}
+
+.time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--warning);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.store-distance {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.order-modes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.mode-btn {
+    position: relative;
+    display: flex;
+    min-height: 112px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 15px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mode-btn:first-child {
+    color: white;
+    background: var(--espresso);
+    box-shadow: 0 14px 28px rgba(58, 36, 28, 0.2);
+}
+
+.mode-btn:last-child {
+    border: 1px solid rgba(117, 129, 109, 0.18);
+    color: var(--espresso);
+    background: var(--sage-soft);
+}
+
+.mode-btn:active {
+    transform: scale(0.97);
+}
+
+.mode-icon {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 19px;
+    background: rgba(255, 255, 255, 0.13);
+}
+
+.mode-btn:last-child .mode-icon {
+    background: rgba(255, 255, 255, 0.66);
+}
+
+.mode-title {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.mode-desc {
+    margin-top: 3px;
+    color: currentColor;
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.mini-arrow {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 15px;
+    opacity: 0.72;
+}
+
+.menu-top {
+    padding: 5px 15px 11px;
+    background: rgba(255, 250, 243, 0.92);
+    backdrop-filter: blur(15px);
+}
+
+.page-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 3px 2px 13px;
+}
+
+.page-title-row h1 {
+    color: var(--espresso);
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 26px;
+}
+
+.round-icon-btn {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--espresso);
+    background: var(--paper);
+    cursor: pointer;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid rgba(74, 48, 36, 0.08);
+    border-radius: 15px;
+    color: var(--muted);
+    background: #f1eae1;
+}
+
+.search-bar input {
+    width: 100%;
+    margin-left: 8px;
+    border: 0;
+    outline: 0;
+    color: var(--ink);
+    background: transparent;
+    font-size: 12px;
+}
+
+.menu-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 88px;
+    margin: 0 15px 12px;
+    padding: 15px 16px;
+    overflow: hidden;
+    border-radius: 19px;
+    color: white;
+    background:
+        linear-gradient(100deg, rgba(58, 36, 28, 0.96), rgba(90, 56, 41, 0.84)),
+        url("assets/coffee-pattern.png") center / 290px;
+    box-shadow: 0 13px 26px rgba(58, 36, 28, 0.17);
+}
+
+.menu-banner::after {
+    position: absolute;
+    right: -27px;
+    bottom: -43px;
+    width: 122px;
+    height: 122px;
+    content: "";
+    border: 18px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+.banner-kicker {
+    color: #e7b783;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+}
+
+.banner-title {
+    margin-top: 5px;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.banner-sub {
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.67);
+    font-size: 10px;
+}
+
+.banner-btn {
+    position: relative;
+    z-index: 1;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 999px;
+    color: var(--espresso);
+    background: var(--oat);
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.menu-container {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: 73px;
+}
+
+.sidebar {
+    width: 88px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 7px 8px 18px;
+}
+
+.category {
+    position: relative;
+    width: 100%;
+    min-height: 56px;
+    margin-bottom: 5px;
+    padding: 10px 7px;
+    border: 0;
+    border-radius: 14px;
+    color: var(--muted);
+    background: transparent;
+    font-size: 11px;
+    line-height: 1.35;
+    cursor: pointer;
+}
+
+.category.active {
+    color: var(--espresso);
+    background: #eee4d7;
+    font-weight: 900;
+}
+
+.category.active::before {
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 3px;
+    height: 23px;
+    content: "";
+    border-radius: 0 6px 6px 0;
+    background: var(--caramel);
+    transform: translateY(-50%);
+}
+
+.product-list {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 6px 14px 25px 7px;
+}
+
+.product-section-title {
+    margin: 4px 0 12px;
+    color: var(--espresso);
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 17px;
+}
+
+.product-item {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 10px;
+    border: 1px solid rgba(74, 48, 36, 0.08);
+    border-radius: 19px;
+    background: rgba(255, 253, 249, 0.94);
+    box-shadow: 0 9px 22px rgba(65, 42, 31, 0.06);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.product-item:active {
+    transform: scale(0.98);
+}
+
+.product-img {
+    position: relative;
+    min-height: 112px;
+    overflow: hidden;
+    border-radius: 14px;
+    background-image:
+        linear-gradient(180deg, rgba(58, 36, 28, 0), rgba(58, 36, 28, 0.08)),
+        url("assets/campus-coffee-hero.png");
+    background-size: 245px auto;
+}
+
+.product-img.latte {
+    background-position: 48% 54%;
+}
+
+.product-img.coconut {
+    background-position: 76% 52%;
+    filter: saturate(0.83) brightness(1.08);
+}
+
+.product-img.americano {
+    background-position: 25% 52%;
+    filter: sepia(0.16) contrast(1.06);
+}
+
+.product-img::after {
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    display: grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    content: "+";
+    border-radius: 50%;
+    color: white;
+    background: var(--espresso);
+    font-size: 18px;
+    font-weight: 500;
+    box-shadow: 0 6px 14px rgba(58, 36, 28, 0.24);
+}
+
+.product-info {
+    min-width: 0;
+    padding: 2px 0;
+}
+
+.product-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.product-name {
+    color: var(--espresso);
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.hot-tag {
+    flex-shrink: 0;
+    padding: 3px 5px;
+    border-radius: 5px;
+    color: var(--danger);
+    background: #fae7e3;
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.product-desc {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.product-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    margin-top: 8px;
+    color: #9a8c84;
+    font-size: 9px;
+}
+
+.product-price {
+    margin-top: 10px;
+    color: var(--espresso);
+    font-family: Georgia, serif;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.checkout-header,
+.orders-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    border-bottom: 1px solid var(--line);
+    color: var(--espresso);
+    background: rgba(255, 253, 249, 0.92);
+    font-size: 15px;
+    font-weight: 900;
+    backdrop-filter: blur(12px);
+}
+
+.back-home-btn {
+    position: absolute;
+    left: 14px;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+.checkout-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px 15px 110px;
+}
+
+.checkout-card {
+    margin-bottom: 12px;
+    padding: 17px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(255, 253, 249, 0.96);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-label {
+    margin-bottom: 11px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.checkout-store {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+    color: var(--espresso);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.checkout-store-icon {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 12px;
+    color: var(--sage);
+    background: var(--sage-soft);
+}
+
+.checkout-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+}
+
+.checkout-product-main {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.checkout-thumb {
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
+    background: url("assets/campus-coffee-hero.png") 50% 54% / 150px auto;
+}
+
+.checkout-item-name {
+    color: var(--espresso);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.checkout-spec {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.checkout-price {
+    color: var(--espresso);
+    font-family: Georgia, serif;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.time-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    padding: 4px;
+    border-radius: 14px;
+    background: #f0e8de;
+}
+
+.time-tab {
+    padding: 10px 5px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--muted);
+    background: transparent;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.time-tab.active {
+    color: var(--espresso);
+    background: white;
+    box-shadow: 0 5px 13px rgba(58, 36, 28, 0.08);
+    font-weight: 900;
+}
+
+.schedule-time {
+    margin-top: 13px;
+    padding: 12px;
+    border-radius: 12px;
+    color: var(--muted);
+    background: var(--oat);
+    text-align: center;
+    font-size: 11px;
+}
+
+.schedule-time input {
+    margin-left: 6px;
+    padding: 5px 7px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    outline: 0;
+    color: var(--espresso);
+    background: white;
+}
+
+.note-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 11px;
+}
+
+.note-row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.note-row span:last-child {
+    color: var(--muted);
+}
+
+.pay-bottom-bar {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 85;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 16px calc(13px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: rgba(255, 253, 249, 0.94);
+    box-shadow: 0 -12px 30px rgba(58, 36, 28, 0.08);
+    backdrop-filter: blur(18px);
+}
+
+.total-label {
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.total-price {
+    margin-top: 2px;
+    color: var(--espresso);
+    font-family: Georgia, serif;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.pay-btn,
+.sheet-primary {
+    border: 0;
+    border-radius: 999px;
+    color: white;
+    background: var(--espresso);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 9px 20px rgba(58, 36, 28, 0.22);
+}
+
+.pay-btn {
+    min-width: 142px;
+    padding: 13px 22px;
+}
+
+.order-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 15px 94px;
+}
+
+.order-card {
+    position: relative;
+    margin-bottom: 12px;
+    padding: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(255, 253, 249, 0.96);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+}
+
+.order-card::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    content: "";
+    background: var(--caramel);
+}
+
+.order-card.done::before {
+    background: var(--sage);
+}
+
+.order-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.order-store {
+    color: var(--espresso);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.order-state {
+    flex-shrink: 0;
+    color: var(--warning);
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.order-card.done .order-state {
+    color: var(--sage);
+}
+
+.order-product {
+    margin-top: 13px;
+    color: var(--ink);
+    font-size: 12px;
+}
+
+.order-time {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.order-live-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 13px;
+    padding: 10px 11px;
+    border-radius: 11px;
+    color: var(--warning);
+    background: #fbf0e2;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--caramel);
+    box-shadow: 0 0 0 5px rgba(201, 141, 87, 0.14);
+}
+
+.bottom-nav {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    left: 12px;
+    z-index: 90;
+    display: flex;
+    min-height: 64px;
+    padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+    border: 1px solid rgba(74, 48, 36, 0.1);
+    border-radius: 22px;
+    background: rgba(255, 253, 249, 0.91);
+    box-shadow: 0 15px 35px rgba(58, 36, 28, 0.15);
+    backdrop-filter: blur(18px);
+}
+
+.nav-item {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: 0;
+    border-radius: 16px;
+    color: #a2938a;
+    background: transparent;
+    font-size: 9px;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    color: var(--espresso);
+    background: #eee4d7;
+    font-weight: 900;
+}
+
+.nav-icon {
+    display: grid;
+    min-height: 20px;
+    place-items: center;
+    font-size: 17px;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    background: rgba(37, 24, 18, 0.48);
+    backdrop-filter: blur(4px);
+}
+
+.store-modal-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 220;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 18px;
+    background:
+        linear-gradient(180deg, rgba(34, 21, 16, 0.18), rgba(34, 21, 16, 0.72)),
+        url("assets/campus-coffee-hero.png") center / cover;
+}
+
+.store-modal-overlay.is-visible {
+    display: flex;
+}
+
+.store-modal-card {
+    width: 100%;
+    padding: 23px 18px 17px;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    border-radius: 26px;
+    background: rgba(255, 250, 243, 0.94);
+    box-shadow: 0 22px 60px rgba(31, 19, 14, 0.28);
+    backdrop-filter: blur(20px);
+    animation: modal-up 0.48s cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+@keyframes modal-up {
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+}
+
+.modal-kicker {
+    text-align: center;
+}
+
+.store-modal-card h2 {
+    margin-top: 5px;
+    color: var(--espresso);
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 24px;
+    text-align: center;
+}
+
+.modal-tip {
+    max-width: 280px;
+    margin: 8px auto 18px;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.55;
+    text-align: center;
+}
+
+.store-option {
+    position: relative;
+    width: 100%;
+    margin-bottom: 9px;
+    padding: 14px 42px 14px 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    text-align: left;
+    background: var(--paper);
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.store-option:active {
+    border-color: var(--caramel);
+    transform: scale(0.985);
+}
+
+.store-option::after {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    content: "›";
+    color: var(--caramel);
+    font-size: 23px;
+    transform: translateY(-50%);
+}
+
+.store-option-title {
+    color: var(--espresso);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.recommend-tag {
+    margin-left: 5px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    color: var(--sage);
+    background: var(--sage-soft);
+    font-size: 8px;
+}
+
+.store-option-desc {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.custom-sheet,
+.order-detail-sheet {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 120;
+    border-radius: 28px 28px 0 0;
+    background: var(--cream);
+    box-shadow: 0 -18px 50px rgba(43, 27, 20, 0.24);
+    transform: translateY(105%);
+    transition: transform 0.38s cubic-bezier(0.2, 0.82, 0.24, 1);
+}
+
+.custom-sheet.active,
+.order-detail-sheet.active {
+    transform: translateY(0);
+}
+
+.custom-sheet {
+    padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
+}
+
+.order-detail-sheet {
+    top: 8%;
+    display: flex;
+    flex-direction: column;
+}
+
+.swipe-handle {
+    width: 42px;
+    height: 5px;
+    margin: 10px auto 7px;
+    border-radius: 99px;
+    background: #d7ccc2;
+}
+
+.sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 2px 16px;
+}
+
+.sheet-title {
+    color: var(--espresso);
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.sheet-close {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--muted);
+    background: white;
+    cursor: pointer;
+}
+
+.option-group {
+    margin-bottom: 18px;
+}
+
+.option-title {
+    margin-bottom: 10px;
+    color: var(--espresso);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.option-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.color-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    color: var(--muted);
+    background: #f0e8de;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.color-tag.selected {
+    border-color: rgba(124, 82, 59, 0.4);
+    color: var(--espresso);
+    background: white;
+    box-shadow: 0 5px 12px rgba(58, 36, 28, 0.07);
+    font-weight: 900;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.sheet-primary {
+    width: 100%;
+    padding: 14px;
+}
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px 13px;
+}
+
+.detail-header h2 {
+    color: var(--espresso);
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 21px;
+}
+
+.sheet-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 15px 28px;
+}
+
+.status-section {
+    position: relative;
+    padding: 24px 18px 18px;
+    overflow: hidden;
+    border-radius: 22px;
+    color: white;
+    background:
+        linear-gradient(135deg, rgba(58, 36, 28, 0.98), rgba(90, 56, 41, 0.9)),
+        url("assets/coffee-pattern.png") center / 300px;
+}
+
+.status-section.done-panel {
+    background: linear-gradient(135deg, #566050, #7b8872);
+}
+
+.status-main {
+    font-family: Georgia, "Songti SC", serif;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.status-sub {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+.queue-number {
+    color: #f0bf85;
+    font-family: Georgia, serif;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.progress-container {
+    height: 6px;
+    margin: 18px 0 6px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.progress-bar {
+    width: 65%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #d69b62, #f1c998);
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.action-btn {
+    padding: 10px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 12px;
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.action-btn.primary {
+    border-color: transparent;
+    color: var(--espresso);
+    background: var(--oat);
+}
+
+.detail-info-card {
+    margin-top: 12px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: white;
+}
+
+.detail-card-title {
+    margin-bottom: 14px;
+    color: var(--espresso);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+    font-size: 10px;
+}
+
+.info-row span:last-child {
+    max-width: 62%;
+    color: var(--ink);
+    text-align: right;
+}
+
+.info-label {
+    color: var(--muted);
+}
+
+.price-lines {
+    margin-top: 15px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+}
+
+.toast {
+    position: absolute;
+    bottom: 94px;
+    left: 50%;
+    z-index: 300;
+    max-width: calc(100% - 38px);
+    padding: 11px 15px;
+    border-radius: 999px;
+    color: white;
+    background: rgba(45, 30, 24, 0.92);
+    box-shadow: 0 12px 30px rgba(45, 30, 24, 0.25);
+    font-size: 10px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 15px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    backdrop-filter: blur(10px);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+@media (max-height: 700px) {
+    .hero-card {
+        min-height: 250px;
+    }
+
+    .hero-copy h1 {
+        font-size: 26px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

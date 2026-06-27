@@ -1,0 +1,114 @@
+.bubble-camera-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: .82;
+  contain: layout paint style;
+}
+
+body.intro-playing .bubble-camera-layer {
+  opacity: 0;
+}
+
+.bubble-particle,
+.bubble-plume {
+  position: absolute;
+  left: var(--x);
+  bottom: var(--bottom, -8vh);
+  width: var(--size);
+  opacity: 0;
+  transform-origin: 50% 70%;
+  will-change: transform, opacity;
+  animation: bubble-rise var(--duration) cubic-bezier(.2, .72, .28, 1) var(--delay, 0s) forwards;
+}
+
+.bubble-particle img,
+.bubble-plume img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: var(--asset-opacity, 1);
+  filter:
+    blur(var(--blur, 0))
+    drop-shadow(0 0 var(--glow, 10px) rgba(134, 232, 255, .25));
+  animation: bubble-sway var(--sway-time, 4.8s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+.bubble-micro {
+  --asset-opacity: .9;
+}
+
+.bubble-large {
+  --asset-opacity: .62;
+  filter: saturate(.78);
+}
+
+.bubble-plume {
+  width: var(--size);
+  bottom: -12vh;
+  animation-name: bubble-plume-rise;
+}
+
+.bubble-plume img {
+  --asset-opacity: .7;
+  --blur: .2px;
+  animation-duration: var(--sway-time, 7s);
+}
+
+@keyframes bubble-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 11vh, 0) scale(var(--start-scale, .78));
+  }
+  12% {
+    opacity: var(--alpha, .38);
+  }
+  66% {
+    opacity: var(--alpha, .38);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift), calc(var(--rise) * -1), 0) scale(var(--end-scale, 1.06));
+  }
+}
+
+@keyframes bubble-plume-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 7vh, 0) scale(var(--start-scale, .9));
+  }
+  16% {
+    opacity: var(--alpha, .22);
+  }
+  52% {
+    opacity: var(--alpha, .22);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift), calc(var(--rise) * -1), 0) scale(var(--end-scale, 1.02));
+  }
+}
+
+@keyframes bubble-sway {
+  from {
+    transform: translateX(calc(var(--sway, 12px) * -1)) rotate(-5deg);
+  }
+  to {
+    transform: translateX(var(--sway, 12px)) rotate(5deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .bubble-camera-layer {
+    opacity: .68;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble-camera-layer {
+    display: none;
+  }
+}
